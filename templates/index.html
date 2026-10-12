@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enterprise Policy Assistant</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Policy Assistant</h1>
+      <p class="subtitle">Ask questions about company policy documents.</p>
+
+      <section class="panel">
+        <h2>Indexed documents</h2>
+        <div id="doc-count" class="doc-count">Loading…</div>
+        <ul id="doc-list" class="doc-list"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>Add a document</h2>
+        <form id="upload-form">
+          <input type="file" id="file-input" name="file" accept=".pdf,.docx,.txt,.md" required />
+          <button type="submit">Upload &amp; Reindex</button>
+        </form>
+        <div id="upload-status" class="status"></div>
+        <p class="hint">Or drop files directly into the <code>documents/</code> folder, then click reindex.</p>
+        <button id="reindex-btn" type="button" class="secondary">Reindex documents/ folder</button>
+      </section>
+    </aside>
+
+    <main class="chat">
+      <div id="messages" class="messages"></div>
+      <form id="chat-form" class="chat-input">
+        <input id="chat-text" type="text" autocomplete="off" placeholder="Ask about a policy, e.g. “How many vacation days do I get?”" />
+        <button type="submit">Send</button>
+      </form>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
