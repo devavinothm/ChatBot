@@ -255,3 +255,140 @@ input[type="file"] {
 .chat-input input:focus {
   outline: 2px solid var(--accent);
 }
+
+/* Guidance Guru Styles */
+.guidance-layout {
+  justify-content: center;
+}
+
+.full-chat {
+  max-width: 920px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.goal-header.hidden {
+  display: none !important;
+}
+
+.goal-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.goal-badge {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.goal-title {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.goal-progress-text {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.goal-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.goal-status-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.status-ontrack {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.status-risk {
+  background: #fce8e6;
+  color: #c5221f;
+}
+
+.status-achieved {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+.btn-subtle {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-subtle:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.welcome-box {
+  margin: auto;
+  max-width: 600px;
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.welcome-box h2 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+
+.welcome-box p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.prompt-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chip {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip:hover {
+  border-color: var(--accent);
+  background: var(--bg);
+  transform: translateY(-1px);
+}
+

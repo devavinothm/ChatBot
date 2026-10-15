@@ -50,7 +50,38 @@
     </section>
 
     <section class="tab-panel" id="tab-guidance-guru">
-      <div class="placeholder">Guidance Guru — coming soon.</div>
+      <div class="layout guidance-layout">
+        <main class="chat full-chat">
+          <header id="guidance-goal-header" class="goal-header hidden">
+            <div class="goal-info">
+              <span class="goal-badge" id="goal-badge">🎯 Active Goal</span>
+              <span class="goal-title" id="goal-title"></span>
+              <span class="goal-progress-text" id="goal-progress-text"></span>
+            </div>
+            <div class="goal-actions">
+              <span class="goal-status-pill" id="goal-status-pill">On Track</span>
+              <button id="guidance-reset-btn" type="button" class="btn-subtle" title="Reset this goal and chat">Reset Goal</button>
+            </div>
+          </header>
+
+          <div id="guidance-messages" class="messages">
+            <div class="welcome-box" id="guidance-welcome">
+              <h2>Welcome to Guidance Guru 🧭</h2>
+              <p>Tell me where you are right now and where you want to be. I'll break down the gap into step-by-step milestones, track your progress, and guide you to your target.</p>
+              <div class="prompt-chips">
+                <button type="button" class="chip" data-prompt="I am stuck at $2k sales. How can I make $5k in the next 2 months?">"I'm stuck at $2k sales. How can I reach $5k?"</button>
+                <button type="button" class="chip" data-prompt="I need to complete my remote work security compliance by Friday. Where do I start?">"Help me finish my remote work compliance checklist"</button>
+                <button type="button" class="chip" data-prompt="Are we on track to hit our goal, or are we at risk?">"Are we on track to hit our goal?"</button>
+              </div>
+            </div>
+          </div>
+
+          <form id="guidance-chat-form" class="chat-input">
+            <input id="guidance-chat-text" type="text" autocomplete="off" placeholder="Share your goal or where you are stuck, e.g. 'I'm stuck at $2k sales...'" />
+            <button type="submit">Send</button>
+          </form>
+        </main>
+      </div>
     </section>
 
     <section class="tab-panel" id="tab-solution-mate">

@@ -7,6 +7,7 @@ from flask import Flask, jsonify, render_template, request, session
 
 from rag.chat import answer_question
 from rag.config import ALLOWED_EXTENSIONS, DOCUMENTS_DIR
+from rag.guidance import answer_guidance
 from rag.indexer import build_index, load_or_build_index
 
 load_dotenv()
@@ -16,6 +17,8 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-change-me")
 
 STORE = load_or_build_index()
 CONVERSATIONS: dict[str, list] = {}
+GUIDANCE_CONVERSATIONS: dict[str, list] = {}
+GUIDANCE_GOALS: dict[str, dict] = {}
 
 
 @app.route("/")
@@ -73,6 +76,52 @@ def chat():
     CONVERSATIONS[session_id] = history[-20:]
 
     return jsonify({"answer": answer_text, "sources": sources})
+
+
+@app.route("/api/guidance/chat", methods=["POST"])
+def guidance_chat():
+    data = request.get_json(silent=True) or {}
+    question = (data.get("message") or "").strip()
+    if not question:
+        return jsonify({"error": "message is required"}), 400
+
+    if "session_id" not in session:
+        session["session_id"] = str(uuid.uuid4())
+    session_id = session["session_id"]
+    history = GUIDANCE_CONVERSATIONS.setdefault(session_id, [])
+    current_goal = GUIDANCE_GOALS.get(session_id)
+
+    try:
+        answer_text, updated_goal, sources = answer_guidance(STORE, question, history, current_goal)
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 500
+
+    if updated_goal:
+        GUIDANCE_GOALS[session_id] = updated_goal
+
+    history.append({"role": "user", "content": question})
+    history.append({"role": "assistant", "content": answer_text})
+    GUIDANCE_CONVERSATIONS[session_id] = history[-20:]
+
+    return jsonify({"answer": answer_text, "goal_state": GUIDANCE_GOALS.get(session_id), "sources": sources})
+
+
+@app.route("/api/guidance/reset", methods=["POST"])
+def guidance_reset():
+    session_id = session.get("session_id")
+    if session_id:
+        GUIDANCE_CONVERSATIONS.pop(session_id, None)
+        GUIDANCE_GOALS.pop(session_id, None)
+    return jsonify({"status": "reset"})
+
+
+@app.route("/api/guidance/state")
+def guidance_state():
+    session_id = session.get("session_id")
+    return jsonify({
+        "goal_state": GUIDANCE_GOALS.get(session_id) if session_id else None,
+        "history_count": len(GUIDANCE_CONVERSATIONS.get(session_id, [])) if session_id else 0
+    })
 
 
 if __name__ == "__main__":
