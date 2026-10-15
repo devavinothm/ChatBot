@@ -90,7 +90,38 @@
     </section>
 
     <section class="tab-panel" id="tab-solution-mate">
-      <div class="placeholder">Solution Mate — coming soon.</div>
+      <div class="layout solution-layout">
+        <main class="chat full-chat">
+          <header id="solution-insight-header" class="goal-header hidden">
+            <div class="goal-info">
+              <span class="goal-badge" id="solution-badge">💡 Strategic Insight</span>
+              <span class="goal-title" id="solution-title"></span>
+              <span class="goal-progress-text" id="solution-impact-text"></span>
+            </div>
+            <div class="goal-actions">
+              <span class="goal-status-pill" id="solution-confidence-pill">High Confidence</span>
+              <button id="solution-reset-btn" type="button" class="btn-subtle" title="Reset this solution analysis">Reset Analysis</button>
+            </div>
+          </header>
+
+          <div id="solution-messages" class="messages">
+            <div class="welcome-box" id="solution-welcome">
+              <h2>Welcome to Solution Mate 💡</h2>
+              <p>Your strategic diagnostic and reasoning partner. Ask deep causal questions, model "what-if" scenarios, and uncover why performance stalled and what specific levers to pull.</p>
+              <div class="prompt-chips">
+                <button type="button" class="chip" data-prompt="We are stuck at $2k sales. If we increase our prices by 20%, what will happen to revenue and customer retention?">"What if we increase our prices by 20%?"</button>
+                <button type="button" class="chip" data-prompt="Why did our conversion rate drop after the latest website update? How do we diagnose the root cause?">"Why did our conversion rate drop? Diagnose the root cause"</button>
+                <button type="button" class="chip" data-prompt="If I want to grow revenue by 50% in the next 90 days, which single lever (traffic, conversion, price, retention) moves the needle fastest?">"Which lever moves the needle fastest to grow 50%?"</button>
+              </div>
+            </div>
+          </div>
+
+          <form id="solution-chat-form" class="chat-input">
+            <input id="solution-chat-text" type="text" autocomplete="off" placeholder="Ask a diagnostic or what-if question, e.g. 'If we change pricing by 20%, what happens?'" />
+            <button type="submit">Analyze</button>
+          </form>
+        </main>
+      </div>
     </section>
 
     <section class="tab-panel" id="tab-utility-minion">

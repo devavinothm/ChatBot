@@ -9,6 +9,7 @@ from rag.chat import answer_question
 from rag.config import ALLOWED_EXTENSIONS, DOCUMENTS_DIR
 from rag.guidance import answer_guidance
 from rag.indexer import build_index, load_or_build_index
+from rag.solution import answer_solution
 
 load_dotenv()
 
@@ -19,6 +20,8 @@ STORE = load_or_build_index()
 CONVERSATIONS: dict[str, list] = {}
 GUIDANCE_CONVERSATIONS: dict[str, list] = {}
 GUIDANCE_GOALS: dict[str, dict] = {}
+SOLUTION_CONVERSATIONS: dict[str, list] = {}
+SOLUTION_SCENARIOS: dict[str, dict] = {}
 
 
 @app.route("/")
@@ -124,6 +127,52 @@ def guidance_state():
     })
 
 
+@app.route("/api/solution/chat", methods=["POST"])
+def solution_chat():
+    data = request.get_json(silent=True) or {}
+    question = (data.get("message") or "").strip()
+    if not question:
+        return jsonify({"error": "message is required"}), 400
+
+    if "session_id" not in session:
+        session["session_id"] = str(uuid.uuid4())
+    session_id = session["session_id"]
+    history = SOLUTION_CONVERSATIONS.setdefault(session_id, [])
+    current_scenario = SOLUTION_SCENARIOS.get(session_id)
+
+    try:
+        answer_text, updated_analysis, sources = answer_solution(STORE, question, history, current_scenario)
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 500
+
+    if updated_analysis:
+        SOLUTION_SCENARIOS[session_id] = updated_analysis
+
+    history.append({"role": "user", "content": question})
+    history.append({"role": "assistant", "content": answer_text})
+    SOLUTION_CONVERSATIONS[session_id] = history[-20:]
+
+    return jsonify({"answer": answer_text, "analysis": SOLUTION_SCENARIOS.get(session_id), "sources": sources})
+
+
+@app.route("/api/solution/reset", methods=["POST"])
+def solution_reset():
+    session_id = session.get("session_id")
+    if session_id:
+        SOLUTION_CONVERSATIONS.pop(session_id, None)
+        SOLUTION_SCENARIOS.pop(session_id, None)
+    return jsonify({"status": "reset"})
+
+
+@app.route("/api/solution/state")
+def solution_state():
+    session_id = session.get("session_id")
+    return jsonify({
+        "analysis": SOLUTION_SCENARIOS.get(session_id) if session_id else None,
+        "history_count": len(SOLUTION_CONVERSATIONS.get(session_id, [])) if session_id else 0
+    })
+
+
 @app.route("/api/clear_all", methods=["POST"])
 def clear_all():
     session_id = session.get("session_id")
@@ -131,6 +180,8 @@ def clear_all():
         CONVERSATIONS.pop(session_id, None)
         GUIDANCE_CONVERSATIONS.pop(session_id, None)
         GUIDANCE_GOALS.pop(session_id, None)
+        SOLUTION_CONVERSATIONS.pop(session_id, None)
+        SOLUTION_SCENARIOS.pop(session_id, None)
     return jsonify({"status": "cleared"})
 
 

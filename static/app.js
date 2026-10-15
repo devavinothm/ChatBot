@@ -3,6 +3,8 @@ const STORAGE_KEYS = {
   infoHistory: "chatbot_history_info",
   guidanceHistory: "chatbot_history_guidance",
   guidanceGoal: "chatbot_guidance_goal",
+  solutionHistory: "chatbot_history_solution",
+  solutionAnalysis: "chatbot_solution_analysis",
 };
 
 function loadStorage(key) {
@@ -40,7 +42,9 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
   });
 });
 
-// --- Information Escort DOM Elements ---
+// ==========================================
+// --- 1. Information Escort Logic ---
+// ==========================================
 const messagesEl = document.getElementById("messages");
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-text");
@@ -166,7 +170,9 @@ if (reindexBtn) {
   });
 }
 
-// --- Guidance Guru DOM Elements ---
+// ==========================================
+// --- 2. Guidance Guru Logic ---
+// ==========================================
 const guidanceMessagesEl = document.getElementById("guidance-messages");
 const guidanceForm = document.getElementById("guidance-chat-form");
 const guidanceInput = document.getElementById("guidance-chat-text");
@@ -268,7 +274,7 @@ if (guidanceForm) {
   });
 }
 
-document.querySelectorAll(".prompt-chips .chip").forEach((chip) => {
+document.querySelectorAll("#tab-guidance-guru .prompt-chips .chip").forEach((chip) => {
   chip.addEventListener("click", () => {
     const prompt = chip.dataset.prompt;
     if (prompt && guidanceInput) {
@@ -296,7 +302,140 @@ if (guidanceResetBtn) {
   });
 }
 
-// --- Clear All Chats Across All Agents ---
+// ==========================================
+// --- 3. Solution Mate Logic ---
+// ==========================================
+const solutionMessagesEl = document.getElementById("solution-messages");
+const solutionForm = document.getElementById("solution-chat-form");
+const solutionInput = document.getElementById("solution-chat-text");
+const solutionHeaderEl = document.getElementById("solution-insight-header");
+const solutionTitleEl = document.getElementById("solution-title");
+const solutionImpactTextEl = document.getElementById("solution-impact-text");
+const solutionConfidencePillEl = document.getElementById("solution-confidence-pill");
+const solutionResetBtn = document.getElementById("solution-reset-btn");
+const solutionWelcomeEl = document.getElementById("solution-welcome");
+
+function updateSolutionHeader(analysis, save = true) {
+  if (!analysis || !analysis.primary_driver) {
+    if (solutionHeaderEl) solutionHeaderEl.classList.add("hidden");
+    if (save) localStorage.removeItem(STORAGE_KEYS.solutionAnalysis);
+    return;
+  }
+  if (!solutionHeaderEl) return;
+  solutionHeaderEl.classList.remove("hidden");
+  solutionTitleEl.textContent = analysis.primary_driver;
+  solutionImpactTextEl.textContent = analysis.expected_impact ? `Impact: ${analysis.expected_impact}` : "";
+
+  const conf = (analysis.confidence || "High").trim();
+  solutionConfidencePillEl.textContent = `${conf} Confidence`;
+  solutionConfidencePillEl.className = "goal-status-pill";
+  if (conf.toLowerCase().includes("low")) {
+    solutionConfidencePillEl.classList.add("status-risk");
+  } else if (conf.toLowerCase().includes("med")) {
+    solutionConfidencePillEl.classList.add("status-ontrack");
+  } else {
+    solutionConfidencePillEl.classList.add("status-achieved");
+  }
+
+  if (save) {
+    saveStorage(STORAGE_KEYS.solutionAnalysis, analysis);
+  }
+}
+
+function addSolutionBubble(role, text, sources, save = true) {
+  const bubble = document.createElement("div");
+  bubble.className = `bubble ${role}`;
+  bubble.textContent = text;
+
+  if (sources && sources.length) {
+    const sourcesEl = document.createElement("div");
+    sourcesEl.className = "sources";
+    sources.forEach((s) => {
+      const tag = document.createElement("span");
+      tag.className = "source-tag";
+      tag.textContent = s;
+      sourcesEl.appendChild(tag);
+    });
+    bubble.appendChild(sourcesEl);
+  }
+
+  solutionMessagesEl.appendChild(bubble);
+  solutionMessagesEl.scrollTop = solutionMessagesEl.scrollHeight;
+
+  if (save) {
+    appendStorageMessage(STORAGE_KEYS.solutionHistory, { role, text, sources: sources || [] });
+  }
+}
+
+if (solutionForm) {
+  solutionForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = solutionInput.value.trim();
+    if (!message) return;
+
+    if (solutionWelcomeEl) {
+      solutionWelcomeEl.style.display = "none";
+    }
+
+    addSolutionBubble("user", message, null, true);
+    solutionInput.value = "";
+    solutionInput.disabled = true;
+
+    try {
+      const res = await fetch("/api/solution/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addSolutionBubble("error", data.error || "Something went wrong.", null, true);
+      } else {
+        addSolutionBubble("assistant", data.answer, data.sources, true);
+        if (data.analysis) {
+          updateSolutionHeader(data.analysis, true);
+        }
+      }
+    } catch (err) {
+      addSolutionBubble("error", "Network error — is the server running?", null, true);
+    } finally {
+      solutionInput.disabled = false;
+      solutionInput.focus();
+    }
+  });
+}
+
+document.querySelectorAll("#tab-solution-mate .prompt-chips .chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    const prompt = chip.dataset.prompt;
+    if (prompt && solutionInput) {
+      solutionInput.value = prompt;
+      solutionForm.dispatchEvent(new Event("submit"));
+    }
+  });
+});
+
+if (solutionResetBtn) {
+  solutionResetBtn.addEventListener("click", async () => {
+    if (!confirm("Reset this solution analysis and conversation history?")) return;
+    try {
+      await fetch("/api/solution/reset", { method: "POST" });
+      updateSolutionHeader(null, true);
+      localStorage.removeItem(STORAGE_KEYS.solutionHistory);
+      solutionMessagesEl.innerHTML = "";
+      if (solutionWelcomeEl) {
+        solutionWelcomeEl.style.display = "block";
+        solutionMessagesEl.appendChild(solutionWelcomeEl);
+      }
+    } catch (err) {
+      console.error("Failed to reset solution session", err);
+    }
+  });
+}
+
+// ==========================================
+// --- 4. Global Clear All Chats ---
+// ==========================================
 const clearAllBtn = document.getElementById("clear-all-chats-btn");
 if (clearAllBtn) {
   clearAllBtn.addEventListener("click", async () => {
@@ -308,6 +447,8 @@ if (clearAllBtn) {
     localStorage.removeItem(STORAGE_KEYS.infoHistory);
     localStorage.removeItem(STORAGE_KEYS.guidanceHistory);
     localStorage.removeItem(STORAGE_KEYS.guidanceGoal);
+    localStorage.removeItem(STORAGE_KEYS.solutionHistory);
+    localStorage.removeItem(STORAGE_KEYS.solutionAnalysis);
 
     // 2. Clear Information Escort UI
     if (messagesEl) messagesEl.innerHTML = "";
@@ -322,7 +463,17 @@ if (clearAllBtn) {
     }
     updateGoalHeader(null, false);
 
-    // 4. Reset server-side session state
+    // 4. Clear Solution Mate UI
+    if (solutionMessagesEl) {
+      solutionMessagesEl.innerHTML = "";
+      if (solutionWelcomeEl) {
+        solutionWelcomeEl.style.display = "block";
+        solutionMessagesEl.appendChild(solutionWelcomeEl);
+      }
+    }
+    updateSolutionHeader(null, false);
+
+    // 5. Reset server-side session state
     try {
       await fetch("/api/clear_all", { method: "POST" });
     } catch (e) {
@@ -331,7 +482,9 @@ if (clearAllBtn) {
   });
 }
 
-// --- Restore Chat History on Page Load ---
+// ==========================================
+// --- 5. Restore Chat Histories on Load ---
+// ==========================================
 (function restoreChatHistories() {
   // Restore Information Escort
   const savedInfo = loadStorage(STORAGE_KEYS.infoHistory) || [];
@@ -353,11 +506,32 @@ if (clearAllBtn) {
   if (savedGoal) {
     updateGoalHeader(savedGoal, false);
   } else {
-    // If not in localStorage, fetch from server session
     fetch("/api/guidance/state")
       .then((r) => r.json())
       .then((data) => {
         if (data && data.goal_state) updateGoalHeader(data.goal_state, true);
+      })
+      .catch(() => {});
+  }
+
+  // Restore Solution Mate
+  const savedSolution = loadStorage(STORAGE_KEYS.solutionHistory) || [];
+  if (solutionMessagesEl) {
+    if (savedSolution.length > 0 && solutionWelcomeEl) {
+      solutionWelcomeEl.style.display = "none";
+    }
+    savedSolution.forEach((item) => addSolutionBubble(item.role, item.text, item.sources, false));
+  }
+
+  // Restore Solution Analysis
+  const savedAnalysis = loadStorage(STORAGE_KEYS.solutionAnalysis);
+  if (savedAnalysis) {
+    updateSolutionHeader(savedAnalysis, false);
+  } else {
+    fetch("/api/solution/state")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.analysis) updateSolutionHeader(data.analysis, true);
       })
       .catch(() => {});
   }

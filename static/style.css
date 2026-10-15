@@ -283,8 +283,9 @@ input[type="file"] {
   outline: 2px solid var(--accent);
 }
 
-/* Guidance Guru Styles */
-.guidance-layout {
+/* Guidance Guru & Solution Mate Styles */
+.guidance-layout,
+.solution-layout {
   justify-content: center;
 }
 
