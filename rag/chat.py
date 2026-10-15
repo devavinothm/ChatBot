@@ -1,9 +1,5 @@
-import os
-from typing import Optional
-
-from anthropic import Anthropic
-
-from .config import CLAUDE_MODEL, TOP_K
+from .config import TOP_K
+from .llm import generate_completion
 from .vector_store import VectorStore
 
 SYSTEM_PROMPT = (
@@ -14,18 +10,6 @@ SYSTEM_PROMPT = (
     "contact HR or Compliance. Always mention which source document(s) "
     "support your answer."
 )
-
-_client: Optional[Anthropic] = None
-
-
-def get_client() -> Anthropic:
-    global _client
-    if _client is None:
-        api_key = os.environ.get("ANTHROPIC_API_KEY")
-        if not api_key:
-            raise RuntimeError("ANTHROPIC_API_KEY is not set. Add it to your .env file.")
-        _client = Anthropic(api_key=api_key)
-    return _client
 
 
 def format_context(results) -> str:
@@ -49,12 +33,9 @@ def answer_question(store: VectorStore, question: str, history: list):
     messages = [{"role": m["role"], "content": m["content"]} for m in history]
     messages.append({"role": "user", "content": augmented_question})
 
-    client = get_client()
-    response = client.messages.create(
-        model=CLAUDE_MODEL,
-        max_tokens=1024,
-        system=SYSTEM_PROMPT,
+    answer_text = generate_completion(
         messages=messages,
+        system_prompt=SYSTEM_PROMPT,
+        max_tokens=1024,
     )
-    answer_text = "".join(block.text for block in response.content if block.type == "text")
     return answer_text, sources
