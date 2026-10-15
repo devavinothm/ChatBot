@@ -25,9 +25,10 @@ Flask app (app.py)
 rag/ package
         ├─ document_loader.py  (PDF/DOCX/TXT/MD → plain text)
         ├─ chunker.py           (text → overlapping word-window Chunks)
-        ├─ vector_store.py       (SentenceTransformer embeddings, cosine search, pickle persistence)
-        ├─ indexer.py             (orchestrates load → chunk → embed → persist)
-        └─ chat.py                 (builds grounded prompt, calls Anthropic Messages API)
+        ├─ vector_store.py       (SentenceTransformer embeddings, ChromaDB cosine search)
+        ├─ indexer.py             (orchestrates load → chunk → embed → Chroma persistence)
+        ├─ llm.py                 (swappable LLM client adapter for Groq & Anthropic)
+        └─ chat.py                 (builds grounded prompt, invokes LLM adapter)
 ```
 
 There is no external database or vector-store service. State lives in two
@@ -82,10 +83,10 @@ This is exact (brute-force) search, O(n) per query. No approximate index
 3. Build the outgoing message list: prior conversation turns (plain
    text, capped at the last 20 entries by `app.py`) + a new user turn whose
    content is `"Policy excerpts:\n\n<context>\n\nEmployee question: <question>"`.
-4. Call `anthropic.Anthropic().messages.create(model=CLAUDE_MODEL,
-   system=SYSTEM_PROMPT, messages=messages, max_tokens=1024)`.
-5. Concatenate all `text`-type content blocks from the response as the
-   answer string.
+4. Delegate generation to `rag.llm: generate_completion`, which routes
+   to Groq (`llama-3.3-70b-versatile` by default) or Anthropic Claude
+   (`claude-sonnet-5` by default) depending on `LLM_PROVIDER` and available API keys.
+5. Extract the generated text from the provider response.
 6. Return `(answer_text, sources)` where `sources` is the sorted, deduped
    set of source filenames among the retrieved chunks — regardless of
    whether Claude's answer text actually cited them.
@@ -129,19 +130,26 @@ successful upload.
 
 ## 5. Configuration (`rag/config.py`)
 
-| Setting                | Default              | Effect                                                   |
-|-------------------------|----------------------|-----------------------------------------------------------|
-| `EMBEDDING_MODEL_NAME` | `all-MiniLM-L6-v2`   | Sentence-transformers model for embeddings (384-dim)      |
-| `CLAUDE_MODEL`          | `claude-sonnet-5`    | Anthropic model used for answer generation                |
-| `CHUNK_SIZE_WORDS`      | 220                  | Words per chunk                                            |
-| `CHUNK_OVERLAP_WORDS`   | 40                   | Overlap between consecutive chunks                        |
-| `TOP_K`                 | 5                    | Number of chunks retrieved per question                   |
-| `MAX_HISTORY_TURNS`     | 6                    | Defined but not currently applied (history capped in `app.py` at 20 entries instead — see §7) |
-| `ALLOWED_EXTENSIONS`    | `.pdf .docx .txt .md`| File types accepted for indexing and upload                |
+| Setting                | Default                   | Effect                                                   |
+|-------------------------|---------------------------|-----------------------------------------------------------|
+| `EMBEDDING_MODEL_NAME` | `all-MiniLM-L6-v2`        | Sentence-transformers model for embeddings (384-dim)      |
+| `LLM_PROVIDER`          | `auto`                    | Active provider: `auto`, `groq`, or `anthropic`           |
+| `GROQ_MODEL`            | `llama-3.3-70b-versatile` | Groq model used when Groq provider is active              |
+| `CLAUDE_MODEL`          | `claude-sonnet-5`         | Anthropic model used when Anthropic provider is active    |
+| `CHUNK_SIZE_WORDS`      | 220                       | Words per chunk                                            |
+| `CHUNK_OVERLAP_WORDS`   | 40                        | Overlap between consecutive chunks                        |
+| `TOP_K`                 | 5                         | Number of chunks retrieved per question                   |
+| `MAX_HISTORY_TURNS`     | 6                         | Defined but not currently applied (history capped in `app.py` at 20 entries instead — see §7) |
+| `ALLOWED_EXTENSIONS`    | `.pdf .docx .txt .md`     | File types accepted for indexing and upload                |
 
 Environment variables (via `.env`, loaded by `python-dotenv`):
 
-- `ANTHROPIC_API_KEY` — required for `/api/chat` to function.
+- `LLM_PROVIDER` — optional provider override (`auto`, `groq`, `anthropic`).
+- `GROQ_API_KEY` — API key for Groq (dev / testing).
+- `GROQ_MODEL` — optional model override for Groq.
+- `ANTHROPIC_API_KEY` — API key for Anthropic Claude (target / production).
+- `CLAUDE_MODEL` — optional model override for Claude.
+- `PORT` — web server port (defaults to 5001 on macOS).
 - `FLASK_SECRET_KEY` — signs the session cookie that carries `session_id`;
   defaults to a hardcoded dev value if unset (**must** be overridden for any
   non-local deployment).

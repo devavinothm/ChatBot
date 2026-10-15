@@ -30,13 +30,15 @@ source citations.
    The first install downloads `sentence-transformers` (and PyTorch), so it
    may take a few minutes and a few hundred MB of disk space.
 
-2. Copy `.env.example` to `.env` and fill in your Anthropic API key:
+2. Copy `.env.example` to `.env` and fill in your API key:
 
    ```
-   copy .env.example .env
+   cp .env.example .env
    ```
 
-   Set `ANTHROPIC_API_KEY` to a key from https://console.anthropic.com/.
+   - **For testing / development (Groq)**: Set `GROQ_API_KEY` to a free key from https://console.groq.com/ (uses `llama-3.3-70b-versatile` by default).
+   - **For target / production (Anthropic Claude)**: Set `ANTHROPIC_API_KEY` to a key from https://console.anthropic.com/.
+   - The app automatically detects which key is configured. You can also explicitly set `LLM_PROVIDER=groq` or `LLM_PROVIDER=anthropic`.
 
 3. Run the app:
 
