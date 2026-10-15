@@ -463,7 +463,13 @@ if (clearAllBtn) {
     localStorage.removeItem(STORAGE_KEYS.solutionAnalysis);
 
     // 2. Clear Information Escort UI
-    if (messagesEl) messagesEl.innerHTML = "";
+    if (messagesEl) {
+      messagesEl.innerHTML = "";
+      if (infoWelcomeEl) {
+        infoWelcomeEl.style.display = "block";
+        messagesEl.appendChild(infoWelcomeEl);
+      }
+    }
 
     // 3. Clear Guidance Guru UI
     if (guidanceMessagesEl) {
@@ -501,6 +507,9 @@ if (clearAllBtn) {
   // Restore Information Escort
   const savedInfo = loadStorage(STORAGE_KEYS.infoHistory) || [];
   if (messagesEl) {
+    if (savedInfo.length > 0 && infoWelcomeEl) {
+      infoWelcomeEl.style.display = "none";
+    }
     savedInfo.forEach((item) => addBubble(item.role, item.text, item.sources, false));
   }
 
@@ -546,7 +555,19 @@ if (clearAllBtn) {
         if (data && data.analysis) updateSolutionHeader(data.analysis, true);
       })
       .catch(() => {});
-  }
+  fetch("/api/store_info")
+    .then((r) => r.json())
+    .then((data) => {
+      if (data) {
+        const nameEl = document.getElementById("header-store-name");
+        const revEl = document.getElementById("header-store-rev");
+        const targetEl = document.getElementById("header-store-target");
+        if (nameEl && data.store_name) nameEl.textContent = data.store_name;
+        if (revEl && data.current_revenue) revEl.textContent = data.current_revenue;
+        if (targetEl && data.target_revenue) targetEl.textContent = data.target_revenue;
+      }
+    })
+    .catch(() => {});
 })();
 
 refreshDocuments();

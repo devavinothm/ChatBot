@@ -96,6 +96,8 @@ def answer_solution(
             f"[Prior Scenario Context: Key Driver: {current_scenario.get('primary_driver', 'N/A')} | "
             f"Evaluated: {current_scenario.get('scenario_evaluated', 'N/A')} | "
             f"Confidence: {current_scenario.get('confidence', 'N/A')}]\n\n"
+        )
+
     # Inject live e-commerce store analytics & historical trends
     store_summary = get_solution_store_summary()
     store_context = f"[Live Store Intelligence & Historical Data:\n{store_summary}]\n\n" if store_summary else ""

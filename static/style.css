@@ -266,22 +266,96 @@ input[type="file"] {
 }
 
 .bubble {
-  max-width: 70%;
+  max-width: 75%;
   padding: 10px 14px;
   border-radius: 12px;
   line-height: 1.4;
-  white-space: pre-wrap;
 }
 
 .bubble.user {
   align-self: flex-end;
   background: var(--bubble-user);
   color: #fff;
+  white-space: pre-wrap;
 }
 
 .bubble.assistant {
   align-self: flex-start;
   background: var(--bubble-assistant);
+  white-space: normal;
+  line-height: 1.5;
+  max-width: 85%;
+}
+
+.bubble.assistant p {
+  margin: 0.4em 0;
+}
+
+.bubble.assistant h1,
+.bubble.assistant h2,
+.bubble.assistant h3,
+.bubble.assistant h4 {
+  margin: 0.6em 0 0.3em;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.bubble.assistant h3 {
+  font-size: 1.05rem;
+}
+
+.bubble.assistant ul,
+.bubble.assistant ol {
+  margin: 0.4em 0;
+  padding-left: 1.4em;
+}
+
+.bubble.assistant li {
+  margin-bottom: 0.25em;
+}
+
+.bubble.assistant hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 10px 0;
+}
+
+.bubble.assistant table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 0.85rem;
+  background: var(--panel);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bubble.assistant th,
+.bubble.assistant td {
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.bubble.assistant th {
+  background: rgba(0, 0, 0, 0.04);
+  font-weight: 600;
+}
+
+.bubble.assistant blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 8px 0;
+  padding: 4px 12px;
+  background: rgba(79, 70, 229, 0.05);
+  border-radius: 0 6px 6px 0;
+}
+
+.bubble.assistant code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 4px;
+  border-radius: 4px;
 }
 
 .bubble.error {
