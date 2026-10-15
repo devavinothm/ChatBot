@@ -16,6 +16,7 @@
         <button class="tab-btn" data-tab="utility-minion" type="button">Utility Minion</button>
       </div>
       <div class="tabs-actions">
+        <button id="open-visualizer-btn" class="btn-visualizer" type="button" title="View Store Analytics & 11 Evaluation Questions">📊 Store Data &amp; 11 Questions</button>
         <div class="store-badge-indicator" id="store-badge-indicator" title="Connected Store Analytics">
           <span class="store-icon">🏪</span>
           <strong id="header-store-name">Lumora Lifestyle</strong>
@@ -60,9 +61,9 @@
               <h2>Information Escort 📚</h2>
               <p>Ask anything about merchant operating agreements, commission rates, shipping SLAs, or return rules.</p>
               <div class="prompt-chips">
-                <button type="button" class="chip chip-info" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?">"What are our commission tiers once we hit $50k sales?"</button>
-                <button type="button" class="chip chip-info" data-prompt="What is our fulfillment SLA window for dispatching customer orders?">"What is our fulfillment &amp; dispatch SLA?"</button>
-                <button type="button" class="chip chip-info" data-prompt="What is the policy on customer returns and restocking fees for open-box home goods?">"What is our policy on returns and restocking fees?"</button>
+                <button type="button" class="chip chip-info" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?"><span class="chip-num">Q1</span> "What are our commission tiers once we hit $50k sales?"</button>
+                <button type="button" class="chip chip-info" data-prompt="What is our fulfillment SLA window for dispatching customer orders?"><span class="chip-num">Q2</span> "What is our fulfillment &amp; dispatch SLA?"</button>
+                <button type="button" class="chip chip-info" data-prompt="What is the policy on customer returns and restocking fees for open-box home goods?"><span class="chip-num">Q3</span> "What is our policy on returns and restocking fees?"</button>
               </div>
             </div>
           </div>
@@ -95,9 +96,10 @@
               <h2>Welcome to Guidance Guru 🧭</h2>
               <p>Coaching <strong>Lumora Lifestyle &amp; Home</strong> from <strong>$24,850/mo</strong> to our <strong>$50,000/mo Q4 Target</strong>. I track your live store KPIs, break down the $25,150 revenue gap into sequential milestones, and guide your daily execution.</p>
               <div class="prompt-chips">
-                <button type="button" class="chip" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?">"We're stuck at $24.8K sales. What is Milestone #1 to reach $50K?"</button>
-                <button type="button" class="chip" data-prompt="Our checkout conversion is 1.80%. What is the next action today to fix our funnel leak?">"Our conversion is 1.8%. What is the next action today to fix the leak?"</button>
-                <button type="button" class="chip" data-prompt="Check our store progress against the $50K Q4 target — are we on track or at risk?">"Check our progress against the $50K target — are we on track or at risk?"</button>
+                <button type="button" class="chip" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?"><span class="chip-num">Q4</span> "We're stuck at $24.8K sales. What is Milestone #1 to reach $50K?"</button>
+                <button type="button" class="chip" data-prompt="Our checkout conversion is 1.80%. What is the next action today to fix our funnel leak?"><span class="chip-num">Q5</span> "Our conversion is 1.8%. What is the next action today to fix the leak?"</button>
+                <button type="button" class="chip" data-prompt="Check our store progress against the $50K Q4 target — are we on track or at risk?"><span class="chip-num">Q6</span> "Check our progress against the $50K target — are we on track or at risk?"</button>
+                <button type="button" class="chip" data-prompt="What is the step-by-step checklist to implement Milestone 1 (Free Shipping &amp; 1-Click Checkout) in Shopify?"><span class="chip-num">Q7</span> "Step-by-step checklist to implement Milestone 1 in Shopify"</button>
               </div>
             </div>
           </div>
@@ -131,9 +133,10 @@
               <h2>Welcome to Solution Mate 💡</h2>
               <p>Strategic diagnostic and reasoning partner for <strong>Lumora Lifestyle &amp; Home</strong>. Analyze 6-month performance trends, model what-if scenarios, evaluate marketing channel ROAS, and optimize unit economics.</p>
               <div class="prompt-chips">
-                <button type="button" class="chip" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months despite steady traffic? Diagnose the root cause.">"Why did our sales plateau at $24.8K for 3 months? Diagnose the root cause"</button>
-                <button type="button" class="chip" data-prompt="What if we shift $1,500 from Meta Ads to Google Shopping and deploy an abandoned cart email flow? Model the outcome.">"What if we shift $1.5K from Meta to Google Shopping + add cart recovery?"</button>
-                <button type="button" class="chip" data-prompt="Which product line in our catalog has the highest margin and lowest return rate to scale into Q4?">"Which product line has highest margin &amp; lowest return rate to scale?"</button>
+                <button type="button" class="chip" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months despite steady traffic? Diagnose the root cause."><span class="chip-num">Q8</span> "Why did our sales plateau at $24.8K for 3 months? Diagnose root cause"</button>
+                <button type="button" class="chip" data-prompt="What if we shift $1,500 from Meta Ads to Google Shopping and deploy an abandoned cart email flow? Model the outcome."><span class="chip-num">Q9</span> "What if we shift $1.5K from Meta to Google Shopping + add cart recovery?"</button>
+                <button type="button" class="chip" data-prompt="Which product line in our catalog has the highest margin and lowest return rate to scale into Q4?"><span class="chip-num">Q10</span> "Which product line has highest margin &amp; lowest return rate to scale?"</button>
+                <button type="button" class="chip" data-prompt="Model the combined revenue outcome if we eliminate checkout shipping shock, deploy email cart recovery, and bundle our Aroma Diffuser."><span class="chip-num">Q11</span> "Model outcome of combined checkout fix + email recovery + bundling"</button>
               </div>
             </div>
           </div>
@@ -150,6 +153,313 @@
     <section class="tab-panel" id="tab-utility-minion">
       <div class="placeholder">Utility Minion — coming soon.</div>
     </section>
+  </div>
+
+  <!-- VISUALIZER & 11 QUESTIONS MODAL -->
+  <div id="visualizer-modal" class="modal-overlay hidden">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-title-row">
+            <span class="modal-badge-icon">🏪</span>
+            <h2>Lumora Lifestyle &amp; Home — Store Intelligence &amp; Data Hub</h2>
+          </div>
+          <p class="modal-subtitle">Live store analytics, conversion funnel data, and 11 evaluation questions across Information Escort, Guidance Guru, and Solution Mate.</p>
+        </div>
+        <button id="close-visualizer-btn" class="modal-close-btn" type="button" title="Close visualizer">&times;</button>
+      </div>
+
+      <div class="modal-nav">
+        <button class="vtab-btn active" data-vtab="vtab-dashboard" type="button">📊 Store Dashboard &amp; Funnel</button>
+        <button class="vtab-btn" data-vtab="vtab-questions" type="button">❓ 11 Interactive Questions (Click to Ask)</button>
+        <button class="vtab-btn" data-vtab="vtab-raw" type="button">📜 Ground-Truth JSON &amp; Policies</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- SUB-TAB 1: DASHBOARD & FUNNEL -->
+        <div class="vtab-panel active" id="vtab-dashboard">
+          <!-- Executive KPI Grid -->
+          <div class="vis-section-title">Store Baseline &amp; Revenue Gap</div>
+          <div class="vis-kpi-grid">
+            <div class="vis-kpi-card highlight">
+              <span class="vis-kpi-label">Monthly Revenue</span>
+              <div class="vis-kpi-val">$24,850 <span class="vis-kpi-target">/ $50,000 Target</span></div>
+              <div class="vis-kpi-sub status-risk">Gap: -$25,150 (49.7% Achieved)</div>
+            </div>
+            <div class="vis-kpi-card">
+              <span class="vis-kpi-label">Conversion Rate</span>
+              <div class="vis-kpi-val">1.80% <span class="vis-kpi-target">/ 2.80% Benchmark</span></div>
+              <div class="vis-kpi-sub status-risk">66.6% Abandonment at Checkout</div>
+            </div>
+            <div class="vis-kpi-card">
+              <span class="vis-kpi-label">Monthly Orders &amp; AOV</span>
+              <div class="vis-kpi-val">380 <span class="vis-kpi-target">@ $65.40 AOV</span></div>
+              <div class="vis-kpi-sub status-ontrack">Target: 760 orders @ $65+ AOV</div>
+            </div>
+            <div class="vis-kpi-card">
+              <span class="vis-kpi-label">Blended CAC &amp; ROAS</span>
+              <div class="vis-kpi-val">$15.79 <span class="vis-kpi-target">/ 4.14x ROAS</span></div>
+              <div class="vis-kpi-sub">Google 4.9x ROAS vs Meta 3.1x</div>
+            </div>
+          </div>
+
+          <!-- Funnel Visualizer -->
+          <div class="vis-section-title">Conversion Funnel &amp; Bottleneck Leak</div>
+          <div class="funnel-container">
+            <div class="funnel-step">
+              <div class="funnel-bar-fill" style="width: 100%;"></div>
+              <div class="funnel-step-content">
+                <strong>1. Store Sessions</strong>
+                <span>21,100 visitors (100%)</span>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar-fill" style="width: 67.3%;"></div>
+              <div class="funnel-step-content">
+                <strong>2. Product Page Views</strong>
+                <span>14,200 visitors (67.3%)</span>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar-fill" style="width: 16.2%;"></div>
+              <div class="funnel-step-content">
+                <strong>3. Added to Cart</strong>
+                <span>3,410 carts (24.0% of views)</span>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-bar-fill" style="width: 5.4%;"></div>
+              <div class="funnel-step-content">
+                <strong>4. Initiated Checkout</strong>
+                <span>1,139 checkouts (33.4% of carts)</span>
+              </div>
+            </div>
+            <div class="funnel-step funnel-leak">
+              <div class="funnel-bar-fill leak-fill" style="width: 1.8%;"></div>
+              <div class="funnel-step-content">
+                <strong>5. Completed Orders</strong>
+                <span><strong>380 orders</strong> (1.80% overall conversion)</span>
+              </div>
+            </div>
+          </div>
+          <div class="funnel-alert">
+            🚨 <strong>Critical Funnel Bottleneck Detected:</strong> <strong>66.6% Checkout Abandonment</strong>. 759 buyers begin checkout but drop off at the final step due to unexpected $8.95 shipping fees. Removing this friction with a $75 free shipping threshold unlocks an estimated <strong>+$6,900/month</strong> immediately.
+          </div>
+
+          <!-- 6-Month Trend & Channels in 2 Columns -->
+          <div class="vis-two-col">
+            <div class="vis-panel">
+              <div class="vis-section-title">6-Month Historical Revenue Trend</div>
+              <table class="vis-table">
+                <thead>
+                  <tr><th>Month</th><th>Revenue</th><th>Sessions</th><th>CR</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>April</td><td>$21,200</td><td>17,800</td><td>1.82%</td><td>Growth</td></tr>
+                  <tr><td>May</td><td>$23,100</td><td>18,900</td><td>1.85%</td><td>Growth</td></tr>
+                  <tr><td>June</td><td>$25,400</td><td>20,400</td><td>1.91%</td><td>Peak</td></tr>
+                  <tr class="row-highlight"><td>July</td><td>$24,900</td><td>21,000</td><td>1.81%</td><td>Plateau Start</td></tr>
+                  <tr class="row-highlight"><td>August</td><td>$24,700</td><td>21,300</td><td>1.78%</td><td>Plateaued</td></tr>
+                  <tr class="row-highlight"><td>September</td><td><strong>$24,850</strong></td><td>21,100</td><td>1.80%</td><td>Current</td></tr>
+                </tbody>
+              </table>
+              <p class="vis-hint">Notice: Traffic grew by +18.5%, but revenue flatlined due to conversion drop-off.</p>
+            </div>
+
+            <div class="vis-panel">
+              <div class="vis-section-title">Marketing Channel Economics</div>
+              <table class="vis-table">
+                <thead>
+                  <tr><th>Channel</th><th>Spend</th><th>Revenue</th><th>ROAS</th><th>CAC</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Meta Ads</td><td>$3,600</td><td>$11,200</td><td>3.11x</td><td>$27.69</td></tr>
+                  <tr class="row-opportunity"><td>Google Shopping</td><td>$1,600</td><td>$7,850</td><td><strong>4.91x</strong></td><td><strong>$16.22</strong></td></tr>
+                  <tr><td>Email Flows</td><td>$300</td><td>$3,400</td><td><strong>11.33x</strong></td><td>$4.41</td></tr>
+                  <tr><td>Organic / Direct</td><td>$0</td><td>$2,400</td><td>&infin;</td><td>$0.00</td></tr>
+                </tbody>
+              </table>
+              <p class="vis-hint">Opportunity: Google Shopping delivers 4.91x ROAS with $16.22 CAC vs Meta's $27.69 CAC.</p>
+            </div>
+          </div>
+
+          <!-- Product Catalog Performance -->
+          <div class="vis-section-title">Product Catalog Margins &amp; Return Rates</div>
+          <table class="vis-table">
+            <thead>
+              <tr><th>Product Name</th><th>Price</th><th>COGS</th><th>Gross Margin</th><th>Monthly Units</th><th>Return %</th><th>Role</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Linen Textured Throw Pillow</td><td>$48</td><td>$15.36</td><td><strong>68%</strong></td><td>110</td><td>2.1%</td><td>Hero Product</td></tr>
+              <tr><td>Ultrasonic Aroma Diffuser</td><td>$64</td><td>$24.32</td><td><strong>62%</strong></td><td>85</td><td>4.2%</td><td>Best for Bundling</td></tr>
+              <tr><td>Ceramic Modern Table Lamp</td><td>$110</td><td>$46.20</td><td><strong>58%</strong></td><td>45</td><td>5.5%</td><td>AOV Booster</td></tr>
+              <tr class="row-risk"><td>Weighted Linen Blanket</td><td>$135</td><td>$74.25</td><td>45%</td><td>32</td><td><strong>12.8%</strong></td><td>High Return Risk</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- SUB-TAB 2: 11 QUESTIONS -->
+        <div class="vtab-panel" id="vtab-questions">
+          <div class="vis-intro-banner">
+            Click any of the <strong>11 curated evaluation questions</strong> below. It will automatically navigate to the designated agent tab, enter the prompt, and execute the query live!
+          </div>
+
+          <!-- Group 1 -->
+          <div class="q-group">
+            <div class="q-group-header">
+              <span class="q-agent-badge badge-info">📚 Information Escort</span>
+              <span class="q-agent-desc">Operational policies, commission tiers, SLAs, and customer returns (RAG grounded in merchant documents)</span>
+            </div>
+            <div class="q-card-list">
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q1</span>
+                  <p class="q-text">What are our platform commission tiers once we reach $50,000 monthly sales?</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: 12% baseline tier vs 8% scale tier policy retrieval with document citation.</span>
+                  <button type="button" class="btn-ask-q" data-tab="information-escort" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?">▶ Ask in Information Escort</button>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q2</span>
+                  <p class="q-text">What is our mandatory order fulfillment SLA window and carrier tracking requirement?</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: 48-hour dispatch SLA, carrier tracking upload, and 5% late penalty rules.</span>
+                  <button type="button" class="btn-ask-q" data-tab="information-escort" data-prompt="What is our fulfillment SLA window for dispatching customer orders?">▶ Ask in Information Escort</button>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q3</span>
+                  <p class="q-text">What is our policy on customer returns, return windows, and restocking fees for home goods?</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: 30-day return window, condition guidelines, and 15% restocking fee on furniture.</span>
+                  <button type="button" class="btn-ask-q" data-tab="information-escort" data-prompt="What is the policy on customer returns and restocking fees for open-box home goods?">▶ Ask in Information Escort</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Group 2 -->
+          <div class="q-group">
+            <div class="q-group-header">
+              <span class="q-agent-badge badge-guidance">🧭 Guidance Guru</span>
+              <span class="q-agent-desc">Current state vs Target state, revenue gap analysis, sequential milestone coaching, and today's action steps</span>
+            </div>
+            <div class="q-card-list">
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q4</span>
+                  <p class="q-text">We are currently plateaued at $24.8K sales. What is our primary revenue gap and milestone roadmap to hit $50K Q4?</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: Current ($24,850) vs Target ($50,000), $25,150 gap, and 4 sequential milestones (MS-01 to MS-04).</span>
+                  <button type="button" class="btn-ask-q" data-tab="guidance-guru" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?">▶ Ask in Guidance Guru</button>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q5</span>
+                  <p class="q-text">Our store conversion rate is 1.80%. Where is our biggest funnel leak and what is today's immediate action to fix it?</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: 66.6% checkout abandonment leak and today's Shopify free-shipping &amp; 1-click checkout execution steps.</span>
+                  <button type="button" class="btn-ask-q" data-tab="guidance-guru" data-prompt="Our checkout conversion is 1.80%. What is the next action today to fix our funnel leak?">▶ Ask in Guidance Guru</button>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q6</span>
+                  <p class="q-text">Check our store progress against the $50K Q4 target — are we on track or at risk?</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: "Are we there yet?" status evaluation, 50% milestone completion check, and risk mitigation.</span>
+                  <button type="button" class="btn-ask-q" data-tab="guidance-guru" data-prompt="Check our store progress against the $50K Q4 target — are we on track or at risk?">▶ Ask in Guidance Guru</button>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q7</span>
+                  <p class="q-text">What is the step-by-step checklist to implement Milestone 1 (Free Shipping &amp; 1-Click Checkout) in Shopify?</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: Detailed tactical walkthrough of Shopify Shipping Profiles, Shop Pay toggles, and A/B verification.</span>
+                  <button type="button" class="btn-ask-q" data-tab="guidance-guru" data-prompt="What is the step-by-step checklist to implement Milestone 1 (Free Shipping &amp; 1-Click Checkout) in Shopify?">▶ Ask in Guidance Guru</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Group 3 -->
+          <div class="q-group">
+            <div class="q-group-header">
+              <span class="q-agent-badge badge-solution">💡 Solution Mate</span>
+              <span class="q-agent-desc">Causal root-cause diagnosis, 6-month trend analysis, what-if simulations, and trade-off sensitivity modeling</span>
+            </div>
+            <div class="q-card-list">
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q8</span>
+                  <p class="q-text">Why did our sales plateau at ~$24.8K for the last 3 months despite steady traffic? Diagnose the root cause using our 6-month history.</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: Revenue = Sessions &times; CR &times; AOV decomposition comparing Apr-Jun growth vs Jul-Sep plateau.</span>
+                  <button type="button" class="btn-ask-q" data-tab="solution-mate" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months despite steady traffic? Diagnose the root cause.">▶ Ask in Solution Mate</button>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q9</span>
+                  <p class="q-text">What if we reallocate $1,500/month of ad spend from Meta Ads to Google Shopping? Model the revenue, order, and CAC impact.</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: Paid media unit economics modeling, projecting +$2,700/mo net lift, +39 orders, and blended CAC decrease.</span>
+                  <button type="button" class="btn-ask-q" data-tab="solution-mate" data-prompt="What if we shift $1,500 from Meta Ads to Google Shopping and deploy an abandoned cart email flow? Model the outcome.">▶ Ask in Solution Mate</button>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q10</span>
+                  <p class="q-text">Which product categories in our catalog have the highest gross margins and lowest return rates to scale into Q4?</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: Catalog unit economics (Pillows 68% margin &amp; 2.1% returns vs Weighted Blankets 12.8% return risk).</span>
+                  <button type="button" class="btn-ask-q" data-tab="solution-mate" data-prompt="Which product line in our catalog has the highest margin and lowest return rate to scale into Q4?">▶ Ask in Solution Mate</button>
+                </div>
+              </div>
+
+              <div class="q-card">
+                <div class="q-card-top">
+                  <span class="q-badge">Q11</span>
+                  <p class="q-text">Model the combined revenue outcome if we eliminate checkout shipping shock, deploy email cart recovery, and bundle our Aroma Diffuser.</p>
+                </div>
+                <div class="q-card-bottom">
+                  <span class="q-meta">Evaluates: Multi-lever synthesis modeling demonstrating the exact roadmap to double revenue from $24.8K to $50K.</span>
+                  <button type="button" class="btn-ask-q" data-tab="solution-mate" data-prompt="Model the combined revenue outcome if we eliminate checkout shipping shock, deploy email cart recovery, and bundle our Aroma Diffuser.">▶ Ask in Solution Mate</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 3: RAW DATA -->
+        <div class="vtab-panel" id="vtab-raw">
+          <div class="vis-section-title">Ground-Truth Store Analytics JSON (data/store_analytics.json)</div>
+          <pre id="raw-store-json" class="raw-code-box">Loading store data...</pre>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="{{ url_for('static', filename='marked.min.js') }}"></script>

@@ -31,6 +31,18 @@ function appendStorageMessage(key, item) {
   saveStorage(key, list);
 }
 
+function formatBubbleContent(bubble, role, text) {
+  if (role === "assistant" && typeof marked !== "undefined" && marked.parse) {
+    try {
+      bubble.innerHTML = marked.parse(text);
+      return;
+    } catch (e) {
+      console.warn("Markdown render error", e);
+    }
+  }
+  bubble.textContent = text;
+}
+
 // --- Tab Switching ---
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -60,7 +72,7 @@ function addBubble(role, text, sources, save = true) {
   if (infoWelcomeEl) infoWelcomeEl.style.display = "none";
   const bubble = document.createElement("div");
   bubble.className = `bubble ${role}`;
-  bubble.textContent = text;
+  formatBubbleContent(bubble, role, text);
 
   if (sources && sources.length) {
     const sourcesEl = document.createElement("div");
@@ -226,7 +238,7 @@ function updateGoalHeader(goalState, save = true) {
 function addGuidanceBubble(role, text, sources, save = true) {
   const bubble = document.createElement("div");
   bubble.className = `bubble ${role}`;
-  bubble.textContent = text;
+  formatBubbleContent(bubble, role, text);
 
   if (sources && sources.length) {
     const sourcesEl = document.createElement("div");
@@ -357,7 +369,7 @@ function updateSolutionHeader(analysis, save = true) {
 function addSolutionBubble(role, text, sources, save = true) {
   const bubble = document.createElement("div");
   bubble.className = `bubble ${role}`;
-  bubble.textContent = text;
+  formatBubbleContent(bubble, role, text);
 
   if (sources && sources.length) {
     const sourcesEl = document.createElement("div");
@@ -555,6 +567,8 @@ if (clearAllBtn) {
         if (data && data.analysis) updateSolutionHeader(data.analysis, true);
       })
       .catch(() => {});
+  }
+
   fetch("/api/store_info")
     .then((r) => r.json())
     .then((data) => {
@@ -571,3 +585,107 @@ if (clearAllBtn) {
 })();
 
 refreshDocuments();
+
+// ==========================================
+// --- 6. Visualizer Modal & 11 Questions Logic ---
+// ==========================================
+const visualizerModal = document.getElementById("visualizer-modal");
+const openVisualizerBtn = document.getElementById("open-visualizer-btn");
+const closeVisualizerBtn = document.getElementById("close-visualizer-btn");
+const rawStoreJsonEl = document.getElementById("raw-store-json");
+
+function openVisualizer() {
+  if (visualizerModal) {
+    visualizerModal.classList.remove("hidden");
+    loadRawStoreJson();
+  }
+}
+
+function closeVisualizer() {
+  if (visualizerModal) {
+    visualizerModal.classList.add("hidden");
+  }
+}
+
+if (openVisualizerBtn) {
+  openVisualizerBtn.addEventListener("click", openVisualizer);
+}
+
+if (closeVisualizerBtn) {
+  closeVisualizerBtn.addEventListener("click", closeVisualizer);
+}
+
+if (visualizerModal) {
+  visualizerModal.addEventListener("click", (e) => {
+    if (e.target === visualizerModal) {
+      closeVisualizer();
+    }
+  });
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && visualizerModal && !visualizerModal.classList.contains("hidden")) {
+    closeVisualizer();
+  }
+});
+
+// Modal tab switching
+document.querySelectorAll(".vtab-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".vtab-btn").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll(".vtab-panel").forEach((p) => p.classList.remove("active"));
+    btn.classList.add("active");
+    const targetPanel = document.getElementById(btn.dataset.vtab);
+    if (targetPanel) targetPanel.classList.add("active");
+  });
+});
+
+// Load Raw Store JSON
+async function loadRawStoreJson() {
+  if (!rawStoreJsonEl) return;
+  try {
+    const res = await fetch("/api/store_analytics");
+    if (res.ok) {
+      const data = await res.json();
+      rawStoreJsonEl.textContent = JSON.stringify(data, null, 2);
+    }
+  } catch (err) {
+    rawStoreJsonEl.textContent = "Error loading store analytics JSON.";
+  }
+}
+
+// 11 Questions Click-to-Ask Handler
+document.querySelectorAll(".btn-ask-q").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const targetTab = btn.dataset.tab;
+    const prompt = btn.dataset.prompt;
+    if (!targetTab || !prompt) return;
+
+    // 1. Close modal
+    closeVisualizer();
+
+    // 2. Switch tab
+    const tabBtn = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
+    if (tabBtn) tabBtn.click();
+
+    // 3. Populate input and submit after small tick to ensure DOM is ready
+    setTimeout(() => {
+      if (targetTab === "information-escort") {
+        if (chatInput && chatForm) {
+          chatInput.value = prompt;
+          chatForm.dispatchEvent(new Event("submit"));
+        }
+      } else if (targetTab === "guidance-guru") {
+        if (guidanceInput && guidanceForm) {
+          guidanceInput.value = prompt;
+          guidanceForm.dispatchEvent(new Event("submit"));
+        }
+      } else if (targetTab === "solution-mate") {
+        if (solutionInput && solutionForm) {
+          solutionInput.value = prompt;
+          solutionForm.dispatchEvent(new Event("submit"));
+        }
+      }
+    }, 80);
+  });
+});

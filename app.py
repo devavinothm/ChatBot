@@ -191,6 +191,12 @@ def store_info():
     return jsonify(get_store_badge_info())
 
 
+@app.route("/api/store_analytics")
+def store_analytics():
+    from rag.store_data import get_store_analytics
+    return jsonify(get_store_analytics())
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
     app.run(debug=True, port=port)

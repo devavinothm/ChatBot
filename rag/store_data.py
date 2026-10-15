@@ -10,13 +10,10 @@ _cached_data = None
 
 
 def get_store_analytics() -> Dict[str, Any]:
-    global _cached_data
-    if _cached_data is None:
-        if not STORE_DATA_PATH.exists():
-            return {}
-        with open(STORE_DATA_PATH, "r", encoding="utf-8") as f:
-            _cached_data = json.load(f)
-    return _cached_data
+    if not STORE_DATA_PATH.exists():
+        return {}
+    with open(STORE_DATA_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def get_guidance_store_summary() -> str:
@@ -32,7 +29,7 @@ def get_guidance_store_summary() -> str:
     products = data.get("product_catalog_performance", [])
 
     lines = [
-        f"=== ACTIVE STORE PROFILE: {info.get('store_name', 'Lumora Lifestyle & Home')} ===",
+        f"=== ACTIVE STORE PROFILE: {info.get('store_name', \"Giri's Fried Chicken\")} ===",
         f"Category: {info.get('domain')} | Platform: {info.get('platform')}",
         f"Overall Goal: {info.get('target_goal')}",
         "",
