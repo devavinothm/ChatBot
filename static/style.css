@@ -52,13 +52,58 @@ body {
   align-items: center;
 }
 
+.tabs-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.store-badge-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: var(--text);
+}
+
+.badge-kpis {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pill-metric {
+  background: #e6f4ea;
+  color: #137333;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.pill-arrow {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.pill-target {
+  background: #e8f0fe;
+  color: #1a73e8;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
 .btn-clear-chats {
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 0.8rem;
+  padding: 5px 10px;
+  font-size: 0.78rem;
   cursor: pointer;
   display: flex;
   align-items: center;

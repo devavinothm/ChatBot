@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .config import TOP_K
 from .llm import generate_completion
+from .store_data import get_solution_store_summary
 from .vector_store import VectorStore
 
 SOLUTION_SYSTEM_PROMPT = """You are Solution Mate, an advanced strategic diagnostic and reasoning partner.
@@ -95,9 +96,11 @@ def answer_solution(
             f"[Prior Scenario Context: Key Driver: {current_scenario.get('primary_driver', 'N/A')} | "
             f"Evaluated: {current_scenario.get('scenario_evaluated', 'N/A')} | "
             f"Confidence: {current_scenario.get('confidence', 'N/A')}]\n\n"
-        )
+    # Inject live e-commerce store analytics & historical trends
+    store_summary = get_solution_store_summary()
+    store_context = f"[Live Store Intelligence & Historical Data:\n{store_summary}]\n\n" if store_summary else ""
 
-    user_content = f"{scenario_context}{policy_context}User Problem / Scenario: {question}".strip()
+    user_content = f"{store_context}{scenario_context}{policy_context}User Problem / Scenario: {question}".strip()
 
     messages = [{"role": m["role"], "content": m["content"]} for m in history]
     messages.append({"role": "user", "content": user_content})

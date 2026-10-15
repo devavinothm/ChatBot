@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .config import TOP_K
 from .llm import generate_completion
+from .store_data import get_guidance_store_summary
 from .vector_store import VectorStore
 
 GUIDANCE_SYSTEM_PROMPT = """You are Guidance Guru, a dedicated goal-oriented coach and progress guide.
@@ -103,7 +104,11 @@ def answer_guidance(
             f"Progress: {current_goal_state.get('progress_pct', 0)}%]\n\n"
         )
 
-    user_content = f"{state_context}{policy_context}User: {question}".strip()
+    # Inject live e-commerce store analytics & active roadmap
+    store_summary = get_guidance_store_summary()
+    store_context = f"[Live Store Intelligence Context:\n{store_summary}]\n\n" if store_summary else ""
+
+    user_content = f"{store_context}{state_context}{policy_context}User: {question}".strip()
 
     messages = [{"role": m["role"], "content": m["content"]} for m in history]
     messages.append({"role": "user", "content": user_content})

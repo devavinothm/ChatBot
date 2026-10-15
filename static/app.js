@@ -54,8 +54,10 @@ const uploadStatus = document.getElementById("upload-status");
 const reindexBtn = document.getElementById("reindex-btn");
 const docCountEl = document.getElementById("doc-count");
 const docListEl = document.getElementById("doc-list");
+const infoWelcomeEl = document.getElementById("info-welcome");
 
 function addBubble(role, text, sources, save = true) {
+  if (infoWelcomeEl) infoWelcomeEl.style.display = "none";
   const bubble = document.createElement("div");
   bubble.className = `bubble ${role}`;
   bubble.textContent = text;
@@ -126,6 +128,16 @@ if (chatForm) {
     }
   });
 }
+
+document.querySelectorAll(".chip-info").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    const prompt = chip.dataset.prompt;
+    if (prompt && chatInput) {
+      chatInput.value = prompt;
+      chatForm.dispatchEvent(new Event("submit"));
+    }
+  });
+});
 
 if (uploadForm) {
   uploadForm.addEventListener("submit", async (event) => {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Enterprise Policy Assistant</title>
+  <title>Enterprise E-Commerce Intelligence Assistant</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
@@ -16,15 +16,25 @@
         <button class="tab-btn" data-tab="utility-minion" type="button">Utility Minion</button>
       </div>
       <div class="tabs-actions">
+        <div class="store-badge-indicator" id="store-badge-indicator" title="Connected Store Analytics">
+          <span class="store-icon">🏪</span>
+          <strong id="header-store-name">Lumora Lifestyle</strong>
+          <span class="badge-kpis">
+            <span class="pill-metric" id="header-store-rev">$24,850/mo</span>
+            <span class="pill-arrow">➔</span>
+            <span class="pill-target" id="header-store-target">$50K Q4</span>
+          </span>
+        </div>
         <button id="clear-all-chats-btn" class="btn-clear-chats" type="button" title="Clear all chats from browser storage">🗑️ Clear All Chats</button>
       </div>
     </nav>
 
+    <!-- TAB 1: INFORMATION ESCORT -->
     <section class="tab-panel active" id="tab-information-escort">
       <div class="layout">
         <aside class="sidebar">
-          <h1>Policy Assistant</h1>
-          <p class="subtitle">Ask questions about company policy documents.</p>
+          <h1>Policy &amp; Standards</h1>
+          <p class="subtitle">Operating policies, commission tiers, SLAs, and customer standards.</p>
 
           <section class="panel">
             <h2>Indexed documents</h2>
@@ -39,21 +49,32 @@
               <button type="submit">Upload &amp; Reindex</button>
             </form>
             <div id="upload-status" class="status"></div>
-            <p class="hint">Or drop files directly into the <code>documents/</code> folder, then click reindex.</p>
+            <p class="hint">Drop PDF/DOCX/TXT/MD files into <code>documents/</code> and reindex.</p>
             <button id="reindex-btn" type="button" class="secondary">Reindex documents/ folder</button>
           </section>
         </aside>
 
         <main class="chat">
-          <div id="messages" class="messages"></div>
+          <div id="messages" class="messages">
+            <div class="welcome-box welcome-sm" id="info-welcome">
+              <h2>Information Escort 📚</h2>
+              <p>Ask anything about merchant operating agreements, commission rates, shipping SLAs, or return rules.</p>
+              <div class="prompt-chips">
+                <button type="button" class="chip chip-info" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?">"What are our commission tiers once we hit $50k sales?"</button>
+                <button type="button" class="chip chip-info" data-prompt="What is our fulfillment SLA window for dispatching customer orders?">"What is our fulfillment &amp; dispatch SLA?"</button>
+                <button type="button" class="chip chip-info" data-prompt="What is the policy on customer returns and restocking fees for open-box home goods?">"What is our policy on returns and restocking fees?"</button>
+              </div>
+            </div>
+          </div>
           <form id="chat-form" class="chat-input">
-            <input id="chat-text" type="text" autocomplete="off" placeholder="Ask about a policy, e.g. “How many vacation days do I get?”" />
+            <input id="chat-text" type="text" autocomplete="off" placeholder="Ask about policies, e.g. “What commission rate applies above $50k?”" />
             <button type="submit">Send</button>
           </form>
         </main>
       </div>
     </section>
 
+    <!-- TAB 2: GUIDANCE GURU -->
     <section class="tab-panel" id="tab-guidance-guru">
       <div class="layout guidance-layout">
         <main class="chat full-chat">
@@ -72,23 +93,24 @@
           <div id="guidance-messages" class="messages">
             <div class="welcome-box" id="guidance-welcome">
               <h2>Welcome to Guidance Guru 🧭</h2>
-              <p>Tell me where you are right now and where you want to be. I'll break down the gap into step-by-step milestones, track your progress, and guide you to your target.</p>
+              <p>Coaching <strong>Lumora Lifestyle &amp; Home</strong> from <strong>$24,850/mo</strong> to our <strong>$50,000/mo Q4 Target</strong>. I track your live store KPIs, break down the $25,150 revenue gap into sequential milestones, and guide your daily execution.</p>
               <div class="prompt-chips">
-                <button type="button" class="chip" data-prompt="I am stuck at $2k sales. How can I make $5k in the next 2 months?">"I'm stuck at $2k sales. How can I reach $5k?"</button>
-                <button type="button" class="chip" data-prompt="I need to complete my remote work security compliance by Friday. Where do I start?">"Help me finish my remote work compliance checklist"</button>
-                <button type="button" class="chip" data-prompt="Are we on track to hit our goal, or are we at risk?">"Are we on track to hit our goal?"</button>
+                <button type="button" class="chip" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?">"We're stuck at $24.8K sales. What is Milestone #1 to reach $50K?"</button>
+                <button type="button" class="chip" data-prompt="Our checkout conversion is 1.80%. What is the next action today to fix our funnel leak?">"Our conversion is 1.8%. What is the next action today to fix the leak?"</button>
+                <button type="button" class="chip" data-prompt="Check our store progress against the $50K Q4 target — are we on track or at risk?">"Check our progress against the $50K target — are we on track or at risk?"</button>
               </div>
             </div>
           </div>
 
           <form id="guidance-chat-form" class="chat-input">
-            <input id="guidance-chat-text" type="text" autocomplete="off" placeholder="Share your goal or where you are stuck, e.g. 'I'm stuck at $2k sales...'" />
+            <input id="guidance-chat-text" type="text" autocomplete="off" placeholder="Ask Guidance Guru, e.g. 'What is our next milestone to reach $50k?'" />
             <button type="submit">Send</button>
           </form>
         </main>
       </div>
     </section>
 
+    <!-- TAB 3: SOLUTION MATE -->
     <section class="tab-panel" id="tab-solution-mate">
       <div class="layout solution-layout">
         <main class="chat full-chat">
@@ -107,23 +129,24 @@
           <div id="solution-messages" class="messages">
             <div class="welcome-box" id="solution-welcome">
               <h2>Welcome to Solution Mate 💡</h2>
-              <p>Your strategic diagnostic and reasoning partner. Ask deep causal questions, model "what-if" scenarios, and uncover why performance stalled and what specific levers to pull.</p>
+              <p>Strategic diagnostic and reasoning partner for <strong>Lumora Lifestyle &amp; Home</strong>. Analyze 6-month performance trends, model what-if scenarios, evaluate marketing channel ROAS, and optimize unit economics.</p>
               <div class="prompt-chips">
-                <button type="button" class="chip" data-prompt="We are stuck at $2k sales. If we increase our prices by 20%, what will happen to revenue and customer retention?">"What if we increase our prices by 20%?"</button>
-                <button type="button" class="chip" data-prompt="Why did our conversion rate drop after the latest website update? How do we diagnose the root cause?">"Why did our conversion rate drop? Diagnose the root cause"</button>
-                <button type="button" class="chip" data-prompt="If I want to grow revenue by 50% in the next 90 days, which single lever (traffic, conversion, price, retention) moves the needle fastest?">"Which lever moves the needle fastest to grow 50%?"</button>
+                <button type="button" class="chip" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months despite steady traffic? Diagnose the root cause.">"Why did our sales plateau at $24.8K for 3 months? Diagnose the root cause"</button>
+                <button type="button" class="chip" data-prompt="What if we shift $1,500 from Meta Ads to Google Shopping and deploy an abandoned cart email flow? Model the outcome.">"What if we shift $1.5K from Meta to Google Shopping + add cart recovery?"</button>
+                <button type="button" class="chip" data-prompt="Which product line in our catalog has the highest margin and lowest return rate to scale into Q4?">"Which product line has highest margin &amp; lowest return rate to scale?"</button>
               </div>
             </div>
           </div>
 
           <form id="solution-chat-form" class="chat-input">
-            <input id="solution-chat-text" type="text" autocomplete="off" placeholder="Ask a diagnostic or what-if question, e.g. 'If we change pricing by 20%, what happens?'" />
+            <input id="solution-chat-text" type="text" autocomplete="off" placeholder="Ask a diagnostic or what-if question, e.g. 'What if we shift ad budget to Google Shopping?'" />
             <button type="submit">Analyze</button>
           </form>
         </main>
       </div>
     </section>
 
+    <!-- TAB 4: UTILITY MINION -->
     <section class="tab-panel" id="tab-utility-minion">
       <div class="placeholder">Utility Minion — coming soon.</div>
     </section>

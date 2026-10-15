@@ -185,6 +185,12 @@ def clear_all():
     return jsonify({"status": "cleared"})
 
 
+@app.route("/api/store_info")
+def store_info():
+    from rag.store_data import get_store_badge_info
+    return jsonify(get_store_badge_info())
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
     app.run(debug=True, port=port)
