@@ -124,6 +124,16 @@ def guidance_state():
     })
 
 
+@app.route("/api/clear_all", methods=["POST"])
+def clear_all():
+    session_id = session.get("session_id")
+    if session_id:
+        CONVERSATIONS.pop(session_id, None)
+        GUIDANCE_CONVERSATIONS.pop(session_id, None)
+        GUIDANCE_GOALS.pop(session_id, None)
+    return jsonify({"status": "cleared"})
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
     app.run(debug=True, port=port)

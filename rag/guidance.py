@@ -43,23 +43,34 @@ If no goal is being discussed (e.g. general greeting), omit the ```goal_state bl
 Keep your conversational response formatted with clean markdown, bullet points, and encouraging tone.
 """
 
-GOAL_STATE_PATTERN = re.compile(r"```goal_state\s*(\{.*?\})\s*```", re.DOTALL)
+GOAL_STATE_PATTERN = re.compile(
+    r"```(?:goal_state|json)?\s*(\{[\s\S]*?\"goal\"[\s\S]*?\})\s*```", re.DOTALL
+)
 
 
 def extract_goal_state(text: str) -> Tuple[str, Optional[Dict[str, Any]]]:
     """Extract and parse the goal_state JSON block from LLM output, returning clean text and dict."""
     match = GOAL_STATE_PATTERN.search(text)
-    if not match:
-        return text.strip(), None
+    if match:
+        json_str = match.group(1)
+        clean_text = GOAL_STATE_PATTERN.sub("", text).strip()
+        try:
+            goal_data = json.loads(json_str)
+            return clean_text, goal_data
+        except Exception:
+            pass
 
-    json_str = match.group(1)
-    clean_text = GOAL_STATE_PATTERN.sub("", text).strip()
+    # Fallback: check for raw JSON object at the end containing "goal"
+    raw_match = re.search(r"(\{\s*\"goal\"\s*:[\s\S]*?\})$", text.strip())
+    if raw_match:
+        try:
+            goal_data = json.loads(raw_match.group(1))
+            clean_text = text[:raw_match.start()].strip()
+            return clean_text, goal_data
+        except Exception:
+            pass
 
-    try:
-        goal_data = json.loads(json_str)
-        return clean_text, goal_data
-    except Exception:
-        return clean_text, None
+    return text.strip(), None
 
 
 def answer_guidance(
@@ -74,7 +85,6 @@ def answer_guidance(
     sources = []
     policy_context = ""
     if results:
-        # Check if top score indicates relevance (cosine similarity > 0.35)
         top_chunk, top_score = results[0]
         if top_score > 0.35:
             sources = sorted({c.source for c, s in results if s > 0.35})
@@ -101,7 +111,7 @@ def answer_guidance(
     raw_response = generate_completion(
         messages=messages,
         system_prompt=GUIDANCE_SYSTEM_PROMPT,
-        max_tokens=1024,
+        max_tokens=2048,
     )
 
     clean_answer, updated_goal_state = extract_goal_state(raw_response)

@@ -9,10 +9,15 @@
 <body>
   <div class="app">
     <nav class="tabs">
-      <button class="tab-btn active" data-tab="information-escort" type="button">Information Escort</button>
-      <button class="tab-btn" data-tab="guidance-guru" type="button">Guidance Guru</button>
-      <button class="tab-btn" data-tab="solution-mate" type="button">Solution Mate</button>
-      <button class="tab-btn" data-tab="utility-minion" type="button">Utility Minion</button>
+      <div class="tab-group">
+        <button class="tab-btn active" data-tab="information-escort" type="button">Information Escort</button>
+        <button class="tab-btn" data-tab="guidance-guru" type="button">Guidance Guru</button>
+        <button class="tab-btn" data-tab="solution-mate" type="button">Solution Mate</button>
+        <button class="tab-btn" data-tab="utility-minion" type="button">Utility Minion</button>
+      </div>
+      <div class="tabs-actions">
+        <button id="clear-all-chats-btn" class="btn-clear-chats" type="button" title="Clear all chats from browser storage">🗑️ Clear All Chats</button>
+      </div>
     </nav>
 
     <section class="tab-panel active" id="tab-information-escort">

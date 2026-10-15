@@ -39,10 +39,37 @@ body {
 
 .tabs {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   flex-shrink: 0;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
   padding: 0 20px;
+}
+
+.tab-group {
+  display: flex;
+  align-items: center;
+}
+
+.btn-clear-chats {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn-clear-chats:hover {
+  background: #fde2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
 }
 
 .tab-btn {
