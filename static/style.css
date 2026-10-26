@@ -1009,3 +1009,134 @@ input[type="file"] {
   line-height: 1.45;
 }
 
+/* ==========================================
+   Multi-Agent & Utility Minion Styles
+   ========================================== */
+.multi-agent-layout,
+.utility-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.multi-agent-routing-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+
+.legend-chip {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+
+.legend-chip.highlight {
+  background: rgba(74, 74, 224, 0.08);
+  border-color: rgba(74, 74, 224, 0.3);
+  color: var(--accent);
+}
+
+.chip-multi {
+  border-left: 3px solid var(--accent);
+}
+
+.chip-multi.highlight {
+  background: rgba(74, 74, 224, 0.08);
+  border-color: var(--accent);
+}
+
+/* Delegation Badge inside Assistant Bubbles */
+.agent-delegation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  flex-wrap: wrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .agent-delegation-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+.agent-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.agent-badge-pill.collab {
+  background: rgba(74, 74, 224, 0.1);
+  border-color: rgba(74, 74, 224, 0.35);
+  color: var(--accent);
+}
+
+.agent-role-tag {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.72rem;
+  margin-left: 4px;
+}
+
+.agent-reasoning-text {
+  font-size: 0.73rem;
+  color: var(--muted);
+  font-style: italic;
+  flex: 1;
+}
+
+.agent-jump-btn {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(74, 74, 224, 0.3);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.agent-jump-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.collab-pills-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.collab-pill-item {
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+}
+
+

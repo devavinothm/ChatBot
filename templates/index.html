@@ -10,7 +10,8 @@
   <div class="app">
     <nav class="tabs">
       <div class="tab-group">
-        <button class="tab-btn active" data-tab="information-escort" type="button">Information Escort</button>
+        <button class="tab-btn active" data-tab="multi-agent" type="button">🤖 Multi Agent</button>
+        <button class="tab-btn" data-tab="information-escort" type="button">Information Escort</button>
         <button class="tab-btn" data-tab="guidance-guru" type="button">Guidance Guru</button>
         <button class="tab-btn" data-tab="solution-mate" type="button">Solution Mate</button>
         <button class="tab-btn" data-tab="utility-minion" type="button">Utility Minion</button>
@@ -30,8 +31,40 @@
       </div>
     </nav>
 
+    <!-- TAB 0: MULTI AGENT ORCHESTRATOR -->
+    <section class="tab-panel active" id="tab-multi-agent">
+      <div class="layout multi-agent-layout">
+        <main class="chat full-chat">
+          <div id="multi-agent-messages" class="messages">
+            <div class="welcome-box" id="multi-agent-welcome">
+              <h2>Multi-Agent Orchestrator 🤖</h2>
+              <p>Ask <strong>any question</strong> about Giri's Fried Chicken or merchant operations. The orchestrator analyzes your question, finds which agent is best suited (<strong>📚 Information Escort</strong>, <strong>🧭 Guidance Guru</strong>, <strong>💡 Solution Mate</strong>, or <strong>🛠️ Utility Minion</strong>), or communicates across multiple agents to answer.</p>
+              <div class="multi-agent-routing-legend">
+                <span class="legend-chip"><span class="legend-icon">📚</span> Policy &amp; SLAs</span>
+                <span class="legend-chip"><span class="legend-icon">🧭</span> Goals &amp; Milestones</span>
+                <span class="legend-chip"><span class="legend-icon">💡</span> Diagnostics &amp; What-If</span>
+                <span class="legend-chip"><span class="legend-icon">🛠️</span> Creative Copy &amp; Ads</span>
+                <span class="legend-chip highlight"><span class="legend-icon">🤝</span> Multi-Agent Collaboration</span>
+              </div>
+              <div class="prompt-chips">
+                <button type="button" class="chip chip-multi" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?"><span class="chip-num">📚 Auto-Route</span> "What are commission tiers above $50k?"</button>
+                <button type="button" class="chip chip-multi" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?"><span class="chip-num">🧭 Auto-Route</span> "We're stuck at $24.8K. What is Milestone #1?"</button>
+                <button type="button" class="chip chip-multi" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months? Diagnose the root cause."><span class="chip-num">💡 Auto-Route</span> "Why did sales plateau at $24.8K? Diagnose root cause"</button>
+                <button type="button" class="chip chip-multi" data-prompt="Draft a 3-step abandoned cart email sequence to recover checkouts for Giri's Fried Chicken."><span class="chip-num">🛠️ Auto-Route</span> "Draft a 3-step abandoned checkout email recovery flow"</button>
+                <button type="button" class="chip chip-multi highlight" data-prompt="Check our return policy on perishable items and draft an email response to a customer requesting a refund for thawed chicken."><span class="chip-num">🤝 Multi-Agent</span> "Check return policy &amp; draft customer refund response"</button>
+              </div>
+            </div>
+          </div>
+          <form id="multi-agent-form" class="chat-input">
+            <input id="multi-agent-text" type="text" autocomplete="off" placeholder="Ask any question — the Multi-Agent orchestrator will find the right agent to answer..." />
+            <button type="submit">Send</button>
+          </form>
+        </main>
+      </div>
+    </section>
+
     <!-- TAB 1: INFORMATION ESCORT -->
-    <section class="tab-panel active" id="tab-information-escort">
+    <section class="tab-panel" id="tab-information-escort">
       <div class="layout">
         <aside class="sidebar">
           <h1>Policy &amp; Standards</h1>
@@ -151,7 +184,26 @@
 
     <!-- TAB 4: UTILITY MINION -->
     <section class="tab-panel" id="tab-utility-minion">
-      <div class="placeholder">Utility Minion — coming soon.</div>
+      <div class="layout utility-layout">
+        <main class="chat full-chat">
+          <div id="utility-messages" class="messages">
+            <div class="welcome-box" id="utility-welcome">
+              <h2>Welcome to Utility Minion 🛠️</h2>
+              <p>Your creative execution and copywriting partner for <strong>Giri's Fried Chicken</strong>. Generate high-converting product descriptions, 3-step cart-recovery email flows, ad copy for Google Shopping and Meta, and creative image generation briefs.</p>
+              <div class="prompt-chips">
+                <button type="button" class="chip" data-prompt="Draft a 3-step abandoned cart email sequence to recover shoppers dropping off due to shipping costs."><span class="chip-num">Email Flow</span> "Draft 3-step abandoned cart email sequence"</button>
+                <button type="button" class="chip" data-prompt="Write an irresistible, mouth-watering product description for Giri's Signature Crispy Jumbo Bucket."><span class="chip-num">Product Copy</span> "Write description for Crispy Jumbo Bucket"</button>
+                <button type="button" class="chip" data-prompt="Generate high-ROAS Google Shopping ad copy and headlines for the Gourmet Hot Sauce Trio."><span class="chip-num">Ad Copy</span> "Google Shopping headlines for Sauce Trio"</button>
+                <button type="button" class="chip" data-prompt="Create an Instagram 9:16 Story image prompt and caption brief for the Family Feast Box."><span class="chip-num">Creative Brief</span> "Instagram 9:16 Story prompt for Family Feast Box"</button>
+              </div>
+            </div>
+          </div>
+          <form id="utility-chat-form" class="chat-input">
+            <input id="utility-chat-text" type="text" autocomplete="off" placeholder="Ask Utility Minion, e.g. 'Draft an email announcing our $75 free shipping threshold'..." />
+            <button type="submit">Generate</button>
+          </form>
+        </main>
+      </div>
     </section>
   </div>
 

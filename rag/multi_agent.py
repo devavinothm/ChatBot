@@ -81,15 +81,45 @@ def classify_question(question: str) -> Dict[str, Any]:
     # Fast heuristic check for obvious domain matches to optimize latency
     q_lower = question.lower()
 
+    # Check for multi-agent / collaborative queries first
+    has_policy = any(k in q_lower for k in ["policy", "sla", "commission tier", "restocking fee", "freshness guarantee", "return rule", "returns", "operating agreement", "dispatch window"])
+    has_goal = any(k in q_lower for k in ["milestone", "roadmap", "goal", "target state", "current state", "$50k", "are we there yet", "on track"])
+    has_strategy = any(k in q_lower for k in ["what if", "why did our sales plateau", "why did sales plateau", "diagnose root cause", "root cause", "roas", "channel", "highest margin", "lowest return rate", "scenario", "model the outcome", "financial impact"])
+    has_creative = any(k in q_lower for k in ["draft an email", "write an email", "email sequence", "write copy", "product description", "ad headline", "write an ad", "creative brief", "image prompt", "social caption", "draft a response", "template"])
+
+    # 1. Collaborative combinations:
+    if has_policy and (has_creative or has_strategy):
+        collabs = ["information_escort"]
+        if has_strategy:
+            collabs.append("solution_mate")
+        if has_creative:
+            collabs.append("utility_minion")
+        return {
+            "primary_agent": "collaborative",
+            "secondary_agents": collabs,
+            "reasoning": f"Cross-agent inquiry combining policy verification ({collabs[0]}) with {collabs[1]}.",
+            "intent": "Policy & Cross-Domain Synthesis",
+        }
+
+    if has_goal and has_creative:
+        return {
+            "primary_agent": "collaborative",
+            "secondary_agents": ["guidance_guru", "utility_minion"],
+            "reasoning": "Combines milestone tracking from Guidance Guru with execution copy from Utility Minion.",
+            "intent": "Milestone-Driven Copywriting",
+        }
+
+    if has_strategy and has_creative:
+        return {
+            "primary_agent": "collaborative",
+            "secondary_agents": ["solution_mate", "utility_minion"],
+            "reasoning": "Combines strategic scenario modeling with promotional copy execution.",
+            "intent": "Strategic Campaign Execution",
+        }
+
+    # 2. Single agent direct matching:
     # Creative / Copywriting -> Utility Minion
-    if any(k in q_lower for k in ["draft an email", "write an email", "email sequence", "write copy", "product description", "ad headline", "write an ad", "creative brief", "image prompt", "social caption"]):
-        if any(k in q_lower for k in ["milestone", "roadmap", "goal"]):
-            return {
-                "primary_agent": "collaborative",
-                "secondary_agents": ["guidance_guru", "utility_minion"],
-                "reasoning": "Combines milestone tracking from Guidance Guru with copy generation from Utility Minion.",
-                "intent": "Milestone-Driven Copywriting",
-            }
+    if has_creative:
         return {
             "primary_agent": "utility_minion",
             "secondary_agents": [],
@@ -98,14 +128,7 @@ def classify_question(question: str) -> Dict[str, Any]:
         }
 
     # Policy / Legal / SLA -> Information Escort
-    if any(k in q_lower for k in ["policy", "sla", "commission tier", "restocking fee", "freshness guarantee", "return rules", "operating agreement", "dispatch window"]):
-        if any(k in q_lower for k in ["model", "what if", "financial impact", "revenue lift"]):
-            return {
-                "primary_agent": "collaborative",
-                "secondary_agents": ["information_escort", "solution_mate"],
-                "reasoning": "Requires policy excerpt verification combined with strategic financial impact modeling.",
-                "intent": "Policy & Scenario Analysis",
-            }
+    if has_policy:
         return {
             "primary_agent": "information_escort",
             "secondary_agents": [],
@@ -114,7 +137,7 @@ def classify_question(question: str) -> Dict[str, Any]:
         }
 
     # What-If / Root Cause / Modeling -> Solution Mate
-    if any(k in q_lower for k in ["what if", "why did our sales plateau", "why did sales plateau", "diagnose root cause", "root cause", "roas", "channel", "highest margin", "lowest return rate", "scenario", "model the outcome"]):
+    if has_strategy:
         return {
             "primary_agent": "solution_mate",
             "secondary_agents": [],
@@ -123,7 +146,7 @@ def classify_question(question: str) -> Dict[str, Any]:
         }
 
     # Goal / Milestone / Progress / Gap -> Guidance Guru
-    if any(k in q_lower for k in ["milestone", "are we there yet", "on track or at risk", "target state", "current state", "revenue gap", "next action today", "checklist to implement", "$50k q4"]):
+    if has_goal:
         return {
             "primary_agent": "guidance_guru",
             "secondary_agents": [],

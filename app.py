@@ -178,6 +178,89 @@ def solution_state():
     })
 
 
+@app.route("/api/multi_agent/chat", methods=["POST"])
+def multi_agent_chat():
+    data = request.get_json(silent=True) or {}
+    question = (data.get("message") or "").strip()
+    if not question:
+        return jsonify({"error": "message is required"}), 400
+
+    if "session_id" not in session:
+        session["session_id"] = str(uuid.uuid4())
+    session_id = session["session_id"]
+    history = MULTI_AGENT_CONVERSATIONS.setdefault(session_id, [])
+
+    session_state = {
+        "goal_state": GUIDANCE_GOALS.get(session_id),
+        "solution_analysis": SOLUTION_SCENARIOS.get(session_id),
+        "utility_draft": UTILITY_DRAFTS.get(session_id),
+    }
+
+    try:
+        result = orchestrate_multi_agent(STORE, question, history, session_state)
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 500
+
+    meta = result.get("metadata", {})
+    if meta.get("goal_state"):
+        GUIDANCE_GOALS[session_id] = meta["goal_state"]
+    if meta.get("solution_analysis"):
+        SOLUTION_SCENARIOS[session_id] = meta["solution_analysis"]
+    if meta.get("utility_draft"):
+        UTILITY_DRAFTS[session_id] = meta["utility_draft"]
+
+    history.append({"role": "user", "content": question})
+    history.append({"role": "assistant", "content": result["answer"]})
+    MULTI_AGENT_CONVERSATIONS[session_id] = history[-20:]
+
+    return jsonify(result)
+
+
+@app.route("/api/multi_agent/reset", methods=["POST"])
+def multi_agent_reset():
+    session_id = session.get("session_id")
+    if session_id:
+        MULTI_AGENT_CONVERSATIONS.pop(session_id, None)
+    return jsonify({"status": "reset"})
+
+
+@app.route("/api/utility/chat", methods=["POST"])
+def utility_chat():
+    data = request.get_json(silent=True) or {}
+    question = (data.get("message") or "").strip()
+    if not question:
+        return jsonify({"error": "message is required"}), 400
+
+    if "session_id" not in session:
+        session["session_id"] = str(uuid.uuid4())
+    session_id = session["session_id"]
+    history = UTILITY_CONVERSATIONS.setdefault(session_id, [])
+    current_draft = UTILITY_DRAFTS.get(session_id)
+
+    try:
+        answer_text, updated_draft = answer_utility(question, history, current_draft)
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 500
+
+    if updated_draft:
+        UTILITY_DRAFTS[session_id] = updated_draft
+
+    history.append({"role": "user", "content": question})
+    history.append({"role": "assistant", "content": answer_text})
+    UTILITY_CONVERSATIONS[session_id] = history[-20:]
+
+    return jsonify({"answer": answer_text, "draft": UTILITY_DRAFTS.get(session_id)})
+
+
+@app.route("/api/utility/reset", methods=["POST"])
+def utility_reset():
+    session_id = session.get("session_id")
+    if session_id:
+        UTILITY_CONVERSATIONS.pop(session_id, None)
+        UTILITY_DRAFTS.pop(session_id, None)
+    return jsonify({"status": "reset"})
+
+
 @app.route("/api/clear_all", methods=["POST"])
 def clear_all():
     session_id = session.get("session_id")
@@ -187,6 +270,9 @@ def clear_all():
         GUIDANCE_GOALS.pop(session_id, None)
         SOLUTION_CONVERSATIONS.pop(session_id, None)
         SOLUTION_SCENARIOS.pop(session_id, None)
+        MULTI_AGENT_CONVERSATIONS.pop(session_id, None)
+        UTILITY_CONVERSATIONS.pop(session_id, None)
+        UTILITY_DRAFTS.pop(session_id, None)
     return jsonify({"status": "cleared"})
 
 

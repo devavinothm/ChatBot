@@ -1,10 +1,13 @@
 // --- Storage Keys & Helpers ---
 const STORAGE_KEYS = {
+  multiAgentHistory: "chatbot_history_multi_agent",
   infoHistory: "chatbot_history_info",
   guidanceHistory: "chatbot_history_guidance",
   guidanceGoal: "chatbot_guidance_goal",
   solutionHistory: "chatbot_history_solution",
   solutionAnalysis: "chatbot_solution_analysis",
+  utilityHistory: "chatbot_history_utility",
+  utilityDraft: "chatbot_utility_draft",
 };
 
 function loadStorage(key) {
@@ -51,6 +54,147 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.classList.add("active");
     const panel = document.getElementById(`tab-${btn.dataset.tab}`);
     if (panel) panel.classList.add("active");
+  });
+});
+
+// ==========================================
+// --- 0. Multi Agent Orchestrator Logic ---
+// ==========================================
+const multiAgentMessagesEl = document.getElementById("multi-agent-messages");
+const multiAgentForm = document.getElementById("multi-agent-form");
+const multiAgentInput = document.getElementById("multi-agent-text");
+const multiAgentWelcomeEl = document.getElementById("multi-agent-welcome");
+
+function addMultiAgentBubble(role, text, routingData, sources, save = true) {
+  if (multiAgentWelcomeEl) multiAgentWelcomeEl.style.display = "none";
+  const bubble = document.createElement("div");
+  bubble.className = `bubble ${role}`;
+
+  if (role === "assistant" && routingData) {
+    const header = document.createElement("div");
+    header.className = "agent-delegation-header";
+
+    const badge = document.createElement("div");
+    const isCollab = routingData.agent === "collaborative";
+    badge.className = `agent-badge-pill ${isCollab ? "collab" : ""}`;
+    badge.innerHTML = `<span>${routingData.agent_icon || "🤖"}</span> <span>${routingData.agent_name || "Specialist Agent"}</span>`;
+
+    if (routingData.agent_role) {
+      const roleTag = document.createElement("span");
+      roleTag.className = "agent-role-tag";
+      roleTag.textContent = `• ${routingData.agent_role}`;
+      badge.appendChild(roleTag);
+    }
+    header.appendChild(badge);
+
+    if (routingData.reasoning) {
+      const reason = document.createElement("span");
+      reason.className = "agent-reasoning-text";
+      reason.textContent = `Why: ${routingData.reasoning}`;
+      header.appendChild(reason);
+    }
+
+    if (routingData.tab_id) {
+      const jumpBtn = document.createElement("button");
+      jumpBtn.type = "button";
+      jumpBtn.className = "agent-jump-btn";
+      jumpBtn.textContent = `Open in ${routingData.agent_name} ➔`;
+      jumpBtn.addEventListener("click", () => {
+        const tabBtn = document.querySelector(`.tab-btn[data-tab="${routingData.tab_id}"]`);
+        if (tabBtn) tabBtn.click();
+      });
+      header.appendChild(jumpBtn);
+    }
+
+    bubble.appendChild(header);
+
+    if (isCollab && routingData.collaborating_agents && routingData.collaborating_agents.length) {
+      const collabRow = document.createElement("div");
+      collabRow.className = "collab-pills-row";
+      routingData.collaborating_agents.forEach((ag) => {
+        const pill = document.createElement("span");
+        pill.className = "collab-pill-item";
+        pill.textContent = `${ag.icon} ${ag.name} (${ag.role})`;
+        collabRow.appendChild(pill);
+      });
+      bubble.appendChild(collabRow);
+    }
+  }
+
+  const textContainer = document.createElement("div");
+  formatBubbleContent(textContainer, role, text);
+  bubble.appendChild(textContainer);
+
+  if (sources && sources.length) {
+    const sourcesEl = document.createElement("div");
+    sourcesEl.className = "sources";
+    sources.forEach((s) => {
+      const tag = document.createElement("span");
+      tag.className = "source-tag";
+      tag.textContent = s;
+      sourcesEl.appendChild(tag);
+    });
+    bubble.appendChild(sourcesEl);
+  }
+
+  multiAgentMessagesEl.appendChild(bubble);
+  multiAgentMessagesEl.scrollTop = multiAgentMessagesEl.scrollHeight;
+
+  if (save) {
+    appendStorageMessage(STORAGE_KEYS.multiAgentHistory, {
+      role,
+      text,
+      routingData: routingData || null,
+      sources: sources || [],
+    });
+  }
+}
+
+if (multiAgentForm) {
+  multiAgentForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = multiAgentInput.value.trim();
+    if (!message) return;
+
+    if (multiAgentWelcomeEl) multiAgentWelcomeEl.style.display = "none";
+    addMultiAgentBubble("user", message, null, null, true);
+    multiAgentInput.value = "";
+    multiAgentInput.disabled = true;
+
+    try {
+      const res = await fetch("/api/multi_agent/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addMultiAgentBubble("error", data.error || "Something went wrong.", null, null, true);
+      } else {
+        addMultiAgentBubble("assistant", data.answer, data, data.sources, true);
+        if (data.metadata && data.metadata.goal_state) {
+          updateGoalHeader(data.metadata.goal_state, true);
+        }
+        if (data.metadata && data.metadata.solution_analysis) {
+          updateSolutionHeader(data.metadata.solution_analysis, true);
+        }
+      }
+    } catch (err) {
+      addMultiAgentBubble("error", "Network error — is the server running?", null, null, true);
+    } finally {
+      multiAgentInput.disabled = false;
+      multiAgentInput.focus();
+    }
+  });
+}
+
+document.querySelectorAll("#tab-multi-agent .prompt-chips .chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    const prompt = chip.dataset.prompt;
+    if (prompt && multiAgentInput) {
+      multiAgentInput.value = prompt;
+      multiAgentForm.dispatchEvent(new Event("submit"));
+    }
   });
 });
 
