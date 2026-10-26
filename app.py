@@ -9,7 +9,9 @@ from rag.chat import answer_question
 from rag.config import ALLOWED_EXTENSIONS, DOCUMENTS_DIR
 from rag.guidance import answer_guidance
 from rag.indexer import build_index, load_or_build_index
+from rag.multi_agent import orchestrate_multi_agent
 from rag.solution import answer_solution
+from rag.utility import answer_utility
 
 load_dotenv()
 
@@ -22,6 +24,9 @@ GUIDANCE_CONVERSATIONS: dict[str, list] = {}
 GUIDANCE_GOALS: dict[str, dict] = {}
 SOLUTION_CONVERSATIONS: dict[str, list] = {}
 SOLUTION_SCENARIOS: dict[str, dict] = {}
+MULTI_AGENT_CONVERSATIONS: dict[str, list] = {}
+UTILITY_CONVERSATIONS: dict[str, list] = {}
+UTILITY_DRAFTS: dict[str, dict] = {}
 
 
 @app.route("/")

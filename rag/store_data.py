@@ -6,7 +6,7 @@ from .config import DATA_DIR
 
 STORE_DATA_PATH = DATA_DIR / "store_analytics.json"
 
-_cached_data = None
+DEFAULT_STORE_NAME = "Giri's Fried Chicken"
 
 
 def get_store_analytics() -> Dict[str, Any]:
@@ -28,8 +28,9 @@ def get_guidance_store_summary() -> str:
     milestones = data.get("active_milestones", [])
     products = data.get("product_catalog_performance", [])
 
+    store_name = info.get("store_name") or DEFAULT_STORE_NAME
     lines = [
-        f"=== ACTIVE STORE PROFILE: {info.get('store_name', \"Giri's Fried Chicken\")} ===",
+        f"=== ACTIVE STORE PROFILE: {store_name} ===",
         f"Category: {info.get('domain')} | Platform: {info.get('platform')}",
         f"Overall Goal: {info.get('target_goal')}",
         "",
@@ -77,8 +78,9 @@ def get_solution_store_summary() -> str:
     products = data.get("product_catalog_performance", [])
     funnel = data.get("conversion_funnel", {})
 
+    store_name = info.get("store_name") or DEFAULT_STORE_NAME
     lines = [
-        f"=== REAL E-COMMERCE BUSINESS CONTEXT: {info.get('store_name', 'Lumora Lifestyle & Home')} ===",
+        f"=== REAL E-COMMERCE BUSINESS CONTEXT: {store_name} ===",
         f"Category: {info.get('domain')} | Reporting Period: {info.get('reporting_period')}",
         f"Current Revenue: ${kpis.get('monthly_revenue', 0):,.2f}/mo | Target: ${kpis.get('target_monthly_revenue', 0):,.2f}/mo",
         f"Orders: {kpis.get('monthly_orders')} | AOV: ${kpis.get('average_order_value', 0):.2f} | Sessions: {kpis.get('store_sessions'):,} | CR: {kpis.get('conversion_rate_pct')}%",
@@ -116,18 +118,53 @@ def get_solution_store_summary() -> str:
     return "\n".join(lines)
 
 
+def get_utility_store_summary() -> str:
+    """Format store data for Utility Minion (Brand voice, products, promotion angles, and copy briefs)."""
+    data = get_store_analytics()
+    if not data:
+        return ""
+
+    info = data.get("store_info", {})
+    products = data.get("product_catalog_performance", [])
+    funnel = data.get("conversion_funnel", {})
+    milestones = data.get("active_milestones", [])
+
+    store_name = info.get("store_name") or DEFAULT_STORE_NAME
+    lines = [
+        f"=== BRAND & STORE CONTEXT: {store_name} ===",
+        f"Domain: {info.get('domain')} | Platform: {info.get('platform')}",
+        "Brand Voice: Irresistible, mouth-watering, Southern artisanal craft, crispy perfection, bold & craving-inducing.",
+        "Signature Differentiators: 24-hr buttermilk brine, 11-spice secret crust, flash-frozen dry-ice insulated shipping.",
+        "",
+        "--- Top Catalog Items Available for Copy & Promotion ---",
+    ]
+
+    for p in products:
+        lines.append(
+            f"• {p.get('product_name')} ({p.get('sku')}): Retail ${p.get('retail_price'):.2f} | Category: {p.get('category')} | Role: {p.get('performance_tier')}"
+        )
+
+    lines.append("")
+    lines.append("--- Active Campaigns & Immediate Conversion Levers ---")
+    lines.append(f"• Cart Recovery Goal: {funnel.get('primary_leak')}")
+    for m in milestones:
+        lines.append(f"• [{m.get('id')}] {m.get('title')}: {m.get('action')}")
+
+    return "\n".join(lines)
+
+
 def get_store_badge_info() -> Dict[str, Any]:
     data = get_store_analytics()
     if not data:
         return {
-            "store_name": "Lumora Lifestyle & Home",
+            "store_name": "Giri's Fried Chicken",
             "current_revenue": "$24,850/mo",
             "target_revenue": "$50,000/mo",
             "conversion_rate": "1.80%",
         }
     kpis = data.get("current_kpis", {})
     return {
-        "store_name": data.get("store_info", {}).get("store_name", "Lumora Lifestyle & Home"),
+        "store_name": data.get("store_info", {}).get("store_name", "Giri's Fried Chicken"),
         "current_revenue": f"${kpis.get('monthly_revenue', 24850):,.0f}/mo",
         "target_revenue": f"${kpis.get('target_monthly_revenue', 50000):,.0f}/mo",
         "conversion_rate": f"{kpis.get('conversion_rate_pct', 1.8)}%",
