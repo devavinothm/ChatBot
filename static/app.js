@@ -602,7 +602,81 @@ if (solutionResetBtn) {
 }
 
 // ==========================================
-// --- 4. Global Clear All Chats ---
+// --- 4. Utility Minion Logic ---
+// ==========================================
+const utilityMessagesEl = document.getElementById("utility-messages");
+const utilityForm = document.getElementById("utility-chat-form");
+const utilityInput = document.getElementById("utility-chat-text");
+const utilityWelcomeEl = document.getElementById("utility-welcome");
+
+function addUtilityBubble(role, text, draft, save = true) {
+  if (utilityWelcomeEl) utilityWelcomeEl.style.display = "none";
+  const bubble = document.createElement("div");
+  bubble.className = `bubble ${role}`;
+  formatBubbleContent(bubble, role, text);
+
+  if (draft && draft.headline) {
+    const draftBadge = document.createElement("div");
+    draftBadge.className = "sources";
+    const tag = document.createElement("span");
+    tag.className = "source-tag";
+    tag.textContent = `📋 Draft: ${draft.headline} (${draft.content_type || "Copy"})`;
+    draftBadge.appendChild(tag);
+    bubble.appendChild(draftBadge);
+  }
+
+  utilityMessagesEl.appendChild(bubble);
+  utilityMessagesEl.scrollTop = utilityMessagesEl.scrollHeight;
+
+  if (save) {
+    appendStorageMessage(STORAGE_KEYS.utilityHistory, { role, text, draft: draft || null });
+  }
+}
+
+if (utilityForm) {
+  utilityForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = utilityInput.value.trim();
+    if (!message) return;
+
+    if (utilityWelcomeEl) utilityWelcomeEl.style.display = "none";
+    addUtilityBubble("user", message, null, true);
+    utilityInput.value = "";
+    utilityInput.disabled = true;
+
+    try {
+      const res = await fetch("/api/utility/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addUtilityBubble("error", data.error || "Something went wrong.", null, true);
+      } else {
+        addUtilityBubble("assistant", data.answer, data.draft, true);
+      }
+    } catch (err) {
+      addUtilityBubble("error", "Network error — is the server running?", null, true);
+    } finally {
+      utilityInput.disabled = false;
+      utilityInput.focus();
+    }
+  });
+}
+
+document.querySelectorAll("#tab-utility-minion .prompt-chips .chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    const prompt = chip.dataset.prompt;
+    if (prompt && utilityInput) {
+      utilityInput.value = prompt;
+      utilityForm.dispatchEvent(new Event("submit"));
+    }
+  });
+});
+
+// ==========================================
+// --- 5. Global Clear All Chats ---
 // ==========================================
 const clearAllBtn = document.getElementById("clear-all-chats-btn");
 if (clearAllBtn) {
@@ -612,13 +686,25 @@ if (clearAllBtn) {
     }
 
     // 1. Clear LocalStorage
+    localStorage.removeItem(STORAGE_KEYS.multiAgentHistory);
     localStorage.removeItem(STORAGE_KEYS.infoHistory);
     localStorage.removeItem(STORAGE_KEYS.guidanceHistory);
     localStorage.removeItem(STORAGE_KEYS.guidanceGoal);
     localStorage.removeItem(STORAGE_KEYS.solutionHistory);
     localStorage.removeItem(STORAGE_KEYS.solutionAnalysis);
+    localStorage.removeItem(STORAGE_KEYS.utilityHistory);
+    localStorage.removeItem(STORAGE_KEYS.utilityDraft);
 
-    // 2. Clear Information Escort UI
+    // 2. Clear Multi Agent UI
+    if (multiAgentMessagesEl) {
+      multiAgentMessagesEl.innerHTML = "";
+      if (multiAgentWelcomeEl) {
+        multiAgentWelcomeEl.style.display = "block";
+        multiAgentMessagesEl.appendChild(multiAgentWelcomeEl);
+      }
+    }
+
+    // 3. Clear Information Escort UI
     if (messagesEl) {
       messagesEl.innerHTML = "";
       if (infoWelcomeEl) {
@@ -627,7 +713,7 @@ if (clearAllBtn) {
       }
     }
 
-    // 3. Clear Guidance Guru UI
+    // 4. Clear Guidance Guru UI
     if (guidanceMessagesEl) {
       guidanceMessagesEl.innerHTML = "";
       if (guidanceWelcomeEl) {
@@ -637,7 +723,7 @@ if (clearAllBtn) {
     }
     updateGoalHeader(null, false);
 
-    // 4. Clear Solution Mate UI
+    // 5. Clear Solution Mate UI
     if (solutionMessagesEl) {
       solutionMessagesEl.innerHTML = "";
       if (solutionWelcomeEl) {
@@ -647,7 +733,16 @@ if (clearAllBtn) {
     }
     updateSolutionHeader(null, false);
 
-    // 5. Reset server-side session state
+    // 6. Clear Utility Minion UI
+    if (utilityMessagesEl) {
+      utilityMessagesEl.innerHTML = "";
+      if (utilityWelcomeEl) {
+        utilityWelcomeEl.style.display = "block";
+        utilityMessagesEl.appendChild(utilityWelcomeEl);
+      }
+    }
+
+    // 7. Reset server-side session state
     try {
       await fetch("/api/clear_all", { method: "POST" });
     } catch (e) {
@@ -657,9 +752,20 @@ if (clearAllBtn) {
 }
 
 // ==========================================
-// --- 5. Restore Chat Histories on Load ---
+// --- 6. Restore Chat Histories on Load ---
 // ==========================================
 (function restoreChatHistories() {
+  // Restore Multi Agent
+  const savedMulti = loadStorage(STORAGE_KEYS.multiAgentHistory) || [];
+  if (multiAgentMessagesEl) {
+    if (savedMulti.length > 0 && multiAgentWelcomeEl) {
+      multiAgentWelcomeEl.style.display = "none";
+    }
+    savedMulti.forEach((item) =>
+      addMultiAgentBubble(item.role, item.text, item.routingData, item.sources, false)
+    );
+  }
+
   // Restore Information Escort
   const savedInfo = loadStorage(STORAGE_KEYS.infoHistory) || [];
   if (messagesEl) {
@@ -711,6 +817,15 @@ if (clearAllBtn) {
         if (data && data.analysis) updateSolutionHeader(data.analysis, true);
       })
       .catch(() => {});
+  }
+
+  // Restore Utility Minion
+  const savedUtility = loadStorage(STORAGE_KEYS.utilityHistory) || [];
+  if (utilityMessagesEl) {
+    if (savedUtility.length > 0 && utilityWelcomeEl) {
+      utilityWelcomeEl.style.display = "none";
+    }
+    savedUtility.forEach((item) => addUtilityBubble(item.role, item.text, item.draft, false));
   }
 
   fetch("/api/store_info")
@@ -814,7 +929,17 @@ document.querySelectorAll(".btn-ask-q").forEach((btn) => {
 
     // 3. Populate input and submit after small tick to ensure DOM is ready
     setTimeout(() => {
-      if (targetTab === "information-escort") {
+      if (targetTab === "multi-agent") {
+        if (multiAgentInput && multiAgentForm) {
+          multiAgentInput.value = prompt;
+          multiAgentForm.dispatchEvent(new Event("submit"));
+        }
+      } else if (targetTab === "utility-minion") {
+        if (utilityInput && utilityForm) {
+          utilityInput.value = prompt;
+          utilityForm.dispatchEvent(new Event("submit"));
+        }
+      } else if (targetTab === "information-escort") {
         if (chatInput && chatForm) {
           chatInput.value = prompt;
           chatForm.dispatchEvent(new Event("submit"));
