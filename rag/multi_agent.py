@@ -76,10 +76,47 @@ ROUTER_PATTERN = re.compile(
 )
 
 
+def handle_orchestrator_greeting(question: str, history: list) -> str:
+    """Provide a warm, concise conversational response without unprompted data dumps."""
+    system_prompt = (
+        "You are the friendly Multi-Agent Assistant for Giri's Fried Chicken on the Gimbll e-commerce platform.\n"
+        "You coordinate 4 specialist agents:\n"
+        "1. Information Escort (policies, commission tiers, SLAs, returns)\n"
+        "2. Guidance Guru (coaching toward $50K Q4 target, sequential milestones)\n"
+        "3. Solution Mate (strategic diagnostics, root-cause analysis, what-if modeling)\n"
+        "4. Utility Minion (product descriptions, email recovery flows, marketing copy)\n\n"
+        "Guidelines:\n"
+        "- Respond warmly, politely, and conversationally in 2-3 short sentences.\n"
+        "- Welcome the user and ask how you can help them today with Giri's Fried Chicken.\n"
+        "- Do NOT output large data tables, financial spreadsheets, or unprompted diagnostics for simple greetings.\n"
+    )
+    messages = [{"role": m["role"], "content": m["content"]} for m in history]
+    messages.append({"role": "user", "content": question})
+    return generate_completion(messages=messages, system_prompt=system_prompt, max_tokens=250)
+
+
 def classify_question(question: str) -> Dict[str, Any]:
     """Classify the question to select the optimal agent or collaborative workflow."""
     # Fast heuristic check for obvious domain matches to optimize latency
-    q_lower = question.lower()
+    q_lower = question.lower().strip()
+
+    # 0. Check for greetings and casual conversational messages
+    q_stripped = re.sub(r"[^\w\s]", "", q_lower).strip()
+    greeting_tokens = {
+        "hi", "hello", "hey", "hiya", "howdy", "good morning", "good afternoon",
+        "good evening", "greetings", "hi there", "hello there", "hey there",
+        "whats up", "what's up", "sup", "yo", "help", "who are you",
+        "what can you do", "thank you", "thanks", "test", "testing"
+    }
+
+    words = q_stripped.split()
+    if q_stripped in greeting_tokens or (len(words) <= 3 and any(w in ["hi", "hello", "hey", "hiya", "howdy", "sup", "yo"] for w in words)):
+        return {
+            "primary_agent": "orchestrator",
+            "secondary_agents": [],
+            "reasoning": "Conversational greeting and welcome.",
+            "intent": "Welcome & Assistance",
+        }
 
     # Check for multi-agent / collaborative queries first
     has_policy = any(k in q_lower for k in ["policy", "sla", "commission tier", "restocking fee", "freshness guarantee", "return rule", "returns", "operating agreement", "dispatch window"])
@@ -246,7 +283,24 @@ def orchestrate_multi_agent(
     reasoning = routing.get("reasoning", "Dispatched to specialist agent.")
     intent = routing.get("intent", "Merchant Inquiry")
 
-    # 1. Collaborative Flow
+    # 1. Direct Orchestrator Greeting & General Assistance
+    if primary == "orchestrator":
+        answer_text = handle_orchestrator_greeting(question, history)
+        return {
+            "answer": answer_text,
+            "agent": "orchestrator",
+            "agent_name": "Multi-Agent Orchestrator",
+            "agent_icon": "🤖",
+            "agent_role": "Unified Assistant",
+            "tab_id": "multi-agent",
+            "reasoning": reasoning,
+            "intent": intent,
+            "collaborating_agents": [],
+            "sources": [],
+            "metadata": {},
+        }
+
+    # 2. Collaborative Flow
     if primary == "collaborative":
         collaborators = routing.get("secondary_agents", ["information_escort", "solution_mate"])
         if len(collaborators) < 2:

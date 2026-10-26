@@ -37,28 +37,54 @@
         <main class="chat full-chat">
           <div id="multi-agent-messages" class="messages">
             <div class="welcome-box" id="multi-agent-welcome">
-              <h2>Multi-Agent Orchestrator 🤖</h2>
-              <p>Ask <strong>any question</strong> about Giri's Fried Chicken or merchant operations. The orchestrator analyzes your question, finds which agent is best suited (<strong>📚 Information Escort</strong>, <strong>🧭 Guidance Guru</strong>, <strong>💡 Solution Mate</strong>, or <strong>🛠️ Utility Minion</strong>), or communicates across multiple agents to answer.</p>
-              <div class="multi-agent-routing-legend">
-                <span class="legend-chip"><span class="legend-icon">📚</span> Policy &amp; SLAs</span>
-                <span class="legend-chip"><span class="legend-icon">🧭</span> Goals &amp; Milestones</span>
-                <span class="legend-chip"><span class="legend-icon">💡</span> Diagnostics &amp; What-If</span>
-                <span class="legend-chip"><span class="legend-icon">🛠️</span> Creative Copy &amp; Ads</span>
-                <span class="legend-chip highlight"><span class="legend-icon">🤝</span> Multi-Agent Collaboration</span>
-              </div>
-              <div class="prompt-chips">
-                <button type="button" class="chip chip-multi" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?"><span class="chip-num">📚 Auto-Route</span> "What are commission tiers above $50k?"</button>
-                <button type="button" class="chip chip-multi" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?"><span class="chip-num">🧭 Auto-Route</span> "We're stuck at $24.8K. What is Milestone #1?"</button>
-                <button type="button" class="chip chip-multi" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months? Diagnose the root cause."><span class="chip-num">💡 Auto-Route</span> "Why did sales plateau at $24.8K? Diagnose root cause"</button>
-                <button type="button" class="chip chip-multi" data-prompt="Draft a 3-step abandoned cart email sequence to recover checkouts for Giri's Fried Chicken."><span class="chip-num">🛠️ Auto-Route</span> "Draft a 3-step abandoned checkout email recovery flow"</button>
-                <button type="button" class="chip chip-multi highlight" data-prompt="Check our return policy on perishable items and draft an email response to a customer requesting a refund for thawed chicken."><span class="chip-num">🤝 Multi-Agent</span> "Check return policy &amp; draft customer refund response"</button>
+              <div class="welcome-avatar">🤖</div>
+              <h2>What can I help with today?</h2>
+              <p class="welcome-sub">Giri's Fried Chicken Multi-Agent Intelligence Hub. Ask any question — the orchestrator automatically detects your intent and delegates to the right agent or coordinates across multiple agents.</p>
+              <div class="prompt-grid">
+                <button type="button" class="prompt-card" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?">
+                  <span class="card-badge">📚 Policy</span>
+                  <strong class="card-title">Commission Tiers</strong>
+                  <span class="card-desc">What are platform commission tiers once we hit $50k monthly sales?</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?">
+                  <span class="card-badge">🧭 Guidance</span>
+                  <strong class="card-title">Milestone Roadmap</strong>
+                  <span class="card-desc">Plateaued at $24.8K sales. What is Milestone #1 to reach $50K Q4?</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months? Diagnose the root cause.">
+                  <span class="card-badge">💡 Diagnostics</span>
+                  <strong class="card-title">Diagnose Root Cause</strong>
+                  <span class="card-desc">Why did sales plateau at $24.8K for 3 months despite steady traffic?</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="Draft a 3-step abandoned cart email sequence to recover checkouts for Giri's Fried Chicken.">
+                  <span class="card-badge">🛠️ Creative</span>
+                  <strong class="card-title">Cart Recovery Flow</strong>
+                  <span class="card-desc">Draft a 3-step abandoned checkout recovery email sequence.</span>
+                </button>
+                <button type="button" class="prompt-card collab" data-prompt="Check our return policy on perishable items and draft an email response to a customer requesting a refund for thawed chicken.">
+                  <span class="card-badge highlight">🤝 Multi-Agent</span>
+                  <strong class="card-title">Policy + Email Draft</strong>
+                  <span class="card-desc">Check perishable return policy &amp; draft customer refund response.</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="What if we shift $1,500 from Meta Ads to Google Shopping and add cart recovery? Model the outcome.">
+                  <span class="card-badge">💡 What-If</span>
+                  <strong class="card-title">Budget Reallocation</strong>
+                  <span class="card-desc">Model shifting $1.5K from Meta to Google Shopping + email recovery.</span>
+                </button>
               </div>
             </div>
           </div>
-          <form id="multi-agent-form" class="chat-input">
-            <input id="multi-agent-text" type="text" autocomplete="off" placeholder="Ask any question — the Multi-Agent orchestrator will find the right agent to answer..." />
-            <button type="submit">Send</button>
-          </form>
+          <div class="chat-input-wrapper">
+            <form id="multi-agent-form" class="chat-input">
+              <input id="multi-agent-text" type="text" autocomplete="off" placeholder="Message Multi-Agent Orchestrator..." />
+              <button type="submit" class="btn-send" aria-label="Send message">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 19V5M5 12l7-7 7 7"/>
+                </svg>
+              </button>
+            </form>
+            <div class="chat-footer-note">Multi-Agent can make mistakes. Verify policy &amp; store data.</div>
+          </div>
         </main>
       </div>
     </section>
@@ -91,19 +117,39 @@
         <main class="chat">
           <div id="messages" class="messages">
             <div class="welcome-box welcome-sm" id="info-welcome">
-              <h2>Information Escort 📚</h2>
-              <p>Ask anything about merchant operating agreements, commission rates, shipping SLAs, or return rules.</p>
-              <div class="prompt-chips">
-                <button type="button" class="chip chip-info" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?"><span class="chip-num">Q1</span> "What are our commission tiers once we hit $50k sales?"</button>
-                <button type="button" class="chip chip-info" data-prompt="What is our fulfillment SLA window for dispatching customer orders?"><span class="chip-num">Q2</span> "What is our fulfillment &amp; dispatch SLA?"</button>
-                <button type="button" class="chip chip-info" data-prompt="What is the policy on perishable food returns, freshness guarantees, and restocking fees for sauces?"><span class="chip-num">Q3</span> "What is our policy on returns and restocking fees?"</button>
+              <div class="welcome-avatar">📚</div>
+              <h2>Information Escort</h2>
+              <p class="welcome-sub">Ask anything about merchant operating agreements, commission rates, shipping SLAs, or return rules.</p>
+              <div class="prompt-grid">
+                <button type="button" class="prompt-card" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?">
+                  <span class="card-badge">Q1</span>
+                  <strong class="card-title">Commission Tiers</strong>
+                  <span class="card-desc">What are platform commission tiers once we hit $50k sales?</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="What is our fulfillment SLA window for dispatching customer orders?">
+                  <span class="card-badge">Q2</span>
+                  <strong class="card-title">Fulfillment SLA</strong>
+                  <span class="card-desc">What is our fulfillment &amp; dispatch SLA window?</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="What is the policy on perishable food returns, freshness guarantees, and restocking fees for sauces?">
+                  <span class="card-badge">Q3</span>
+                  <strong class="card-title">Returns &amp; Restocking</strong>
+                  <span class="card-desc">What is our policy on returns, freshness, and restocking fees?</span>
+                </button>
               </div>
             </div>
           </div>
-          <form id="chat-form" class="chat-input">
-            <input id="chat-text" type="text" autocomplete="off" placeholder="Ask about policies, e.g. “What commission rate applies above $50k?”" />
-            <button type="submit">Send</button>
-          </form>
+          <div class="chat-input-wrapper">
+            <form id="chat-form" class="chat-input">
+              <input id="chat-text" type="text" autocomplete="off" placeholder="Ask about policies, SLAs, or commission rates..." />
+              <button type="submit" class="btn-send" aria-label="Send message">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 19V5M5 12l7-7 7 7"/>
+                </svg>
+              </button>
+            </form>
+            <div class="chat-footer-note">Information Escort grounds answers in policy documents.</div>
+          </div>
         </main>
       </div>
     </section>
@@ -126,21 +172,45 @@
 
           <div id="guidance-messages" class="messages">
             <div class="welcome-box" id="guidance-welcome">
-              <h2>Welcome to Guidance Guru 🧭</h2>
-              <p>Coaching <strong>Giri's Fried Chicken</strong> from <strong>$24,850/mo</strong> to our <strong>$50,000/mo Q4 Target</strong> on Gimbll. I track your live store KPIs, break down the $25,150 revenue gap into sequential milestones, and guide your daily execution.</p>
-              <div class="prompt-chips">
-                <button type="button" class="chip" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?"><span class="chip-num">Q4</span> "We're stuck at $24.8K sales. What is Milestone #1 to reach $50K?"</button>
-                <button type="button" class="chip" data-prompt="Our checkout conversion is 1.80%. What is the next action today to fix our funnel leak?"><span class="chip-num">Q5</span> "Our conversion is 1.8%. What is the next action today to fix the leak?"</button>
-                <button type="button" class="chip" data-prompt="Check our store progress against the $50K Q4 target — are we on track or at risk?"><span class="chip-num">Q6</span> "Check our progress against the $50K target — are we on track or at risk?"</button>
-                <button type="button" class="chip" data-prompt="What is the step-by-step checklist to implement Milestone 1 (Free Shipping &amp; 1-Click Checkout) in Shopify?"><span class="chip-num">Q7</span> "Step-by-step checklist to implement Milestone 1 in Shopify"</button>
+              <div class="welcome-avatar">🧭</div>
+              <h2>Guidance Guru</h2>
+              <p class="welcome-sub">Coaching <strong>Giri's Fried Chicken</strong> from <strong>$24,850/mo</strong> to our <strong>$50,000/mo Q4 Target</strong>. Tracking KPIs, breaking down the $25,150 gap into milestones, and guiding daily execution.</p>
+              <div class="prompt-grid">
+                <button type="button" class="prompt-card" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?">
+                  <span class="card-badge">Q4</span>
+                  <strong class="card-title">Milestone Roadmap</strong>
+                  <span class="card-desc">Stuck at $24.8K sales. What is Milestone #1 to reach $50K?</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="Our checkout conversion is 1.80%. What is the next action today to fix our funnel leak?">
+                  <span class="card-badge">Q5</span>
+                  <strong class="card-title">Fix Funnel Leak</strong>
+                  <span class="card-desc">Conversion is 1.8%. What is the next action today to fix the leak?</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="Check our store progress against the $50K Q4 target — are we on track or at risk?">
+                  <span class="card-badge">Q6</span>
+                  <strong class="card-title">Progress Check</strong>
+                  <span class="card-desc">Check our progress against the $50K target — on track or at risk?</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="What is the step-by-step checklist to implement Milestone 1 (Free Shipping &amp; 1-Click Checkout) in Shopify?">
+                  <span class="card-badge">Q7</span>
+                  <strong class="card-title">Implementation Checklist</strong>
+                  <span class="card-desc">Step-by-step checklist to implement Milestone 1 in Shopify.</span>
+                </button>
               </div>
             </div>
           </div>
 
-          <form id="guidance-chat-form" class="chat-input">
-            <input id="guidance-chat-text" type="text" autocomplete="off" placeholder="Ask Guidance Guru, e.g. 'What is our next milestone to reach $50k?'" />
-            <button type="submit">Send</button>
-          </form>
+          <div class="chat-input-wrapper">
+            <form id="guidance-chat-form" class="chat-input">
+              <input id="guidance-chat-text" type="text" autocomplete="off" placeholder="Ask Guidance Guru, e.g. 'What is our next milestone to reach $50k?'" />
+              <button type="submit" class="btn-send" aria-label="Send message">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 19V5M5 12l7-7 7 7"/>
+                </svg>
+              </button>
+            </form>
+            <div class="chat-footer-note">Guidance Guru coaches sequential milestones toward the $50k target.</div>
+          </div>
         </main>
       </div>
     </section>
@@ -163,21 +233,45 @@
 
           <div id="solution-messages" class="messages">
             <div class="welcome-box" id="solution-welcome">
-              <h2>Welcome to Solution Mate 💡</h2>
-              <p>Strategic diagnostic and reasoning partner for <strong>Giri's Fried Chicken</strong>. Analyze 6-month performance trends, model what-if scenarios, evaluate marketing channel ROAS, and optimize unit economics.</p>
-              <div class="prompt-chips">
-                <button type="button" class="chip" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months despite steady traffic? Diagnose the root cause."><span class="chip-num">Q8</span> "Why did our sales plateau at $24.8K for 3 months? Diagnose root cause"</button>
-                <button type="button" class="chip" data-prompt="What if we shift $1,500 from Meta Ads to Google Shopping and deploy an abandoned cart email flow? Model the outcome."><span class="chip-num">Q9</span> "What if we shift $1.5K from Meta to Google Shopping + add cart recovery?"</button>
-                <button type="button" class="chip" data-prompt="Which product line in our catalog has the highest margin and lowest return rate to scale into Q4?"><span class="chip-num">Q10</span> "Which product line has highest margin &amp; lowest return rate to scale?"</button>
-                <button type="button" class="chip" data-prompt="Model the combined revenue outcome if we eliminate checkout shipping shock, deploy email cart recovery, and bundle our Gourmet Sauce Trio."><span class="chip-num">Q11</span> "Model outcome of combined checkout fix + email recovery + bundling"</button>
+              <div class="welcome-avatar">💡</div>
+              <h2>Solution Mate</h2>
+              <p class="welcome-sub">Strategic diagnostic and reasoning partner for <strong>Giri's Fried Chicken</strong>. Analyze 6-month performance trends, model what-if scenarios, and evaluate marketing channel ROAS.</p>
+              <div class="prompt-grid">
+                <button type="button" class="prompt-card" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months despite steady traffic? Diagnose the root cause.">
+                  <span class="card-badge">Q8</span>
+                  <strong class="card-title">Diagnose Plateau</strong>
+                  <span class="card-desc">Why did sales plateau at $24.8K for 3 months? Diagnose root cause.</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="What if we shift $1,500 from Meta Ads to Google Shopping and deploy an abandoned cart email flow? Model the outcome.">
+                  <span class="card-badge">Q9</span>
+                  <strong class="card-title">Model Budget Shift</strong>
+                  <span class="card-desc">Shift $1.5K from Meta to Google Shopping + add cart recovery flow.</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="Which product line in our catalog has the highest margin and lowest return rate to scale into Q4?">
+                  <span class="card-badge">Q10</span>
+                  <strong class="card-title">Product Economics</strong>
+                  <span class="card-desc">Which product line has highest margin &amp; lowest return rate to scale?</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="Model the combined revenue outcome if we eliminate checkout shipping shock, deploy email cart recovery, and bundle our Gourmet Sauce Trio.">
+                  <span class="card-badge">Q11</span>
+                  <strong class="card-title">Combined Scenario</strong>
+                  <span class="card-desc">Model outcome of combined checkout fix + email recovery + bundling.</span>
+                </button>
               </div>
             </div>
           </div>
 
-          <form id="solution-chat-form" class="chat-input">
-            <input id="solution-chat-text" type="text" autocomplete="off" placeholder="Ask a diagnostic or what-if question, e.g. 'What if we shift ad budget to Google Shopping?'" />
-            <button type="submit">Analyze</button>
-          </form>
+          <div class="chat-input-wrapper">
+            <form id="solution-chat-form" class="chat-input">
+              <input id="solution-chat-text" type="text" autocomplete="off" placeholder="Ask a diagnostic or what-if question, e.g. 'What if we shift ad budget to Google Shopping?'" />
+              <button type="submit" class="btn-send" aria-label="Send message">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 19V5M5 12l7-7 7 7"/>
+                </svg>
+              </button>
+            </form>
+            <div class="chat-footer-note">Solution Mate models strategic scenarios with data-driven confidence ratings.</div>
+          </div>
         </main>
       </div>
     </section>
@@ -188,20 +282,44 @@
         <main class="chat full-chat">
           <div id="utility-messages" class="messages">
             <div class="welcome-box" id="utility-welcome">
-              <h2>Welcome to Utility Minion 🛠️</h2>
-              <p>Your creative execution and copywriting partner for <strong>Giri's Fried Chicken</strong>. Generate high-converting product descriptions, 3-step cart-recovery email flows, ad copy for Google Shopping and Meta, and creative image generation briefs.</p>
-              <div class="prompt-chips">
-                <button type="button" class="chip" data-prompt="Draft a 3-step abandoned cart email sequence to recover shoppers dropping off due to shipping costs."><span class="chip-num">Email Flow</span> "Draft 3-step abandoned cart email sequence"</button>
-                <button type="button" class="chip" data-prompt="Write an irresistible, mouth-watering product description for Giri's Signature Crispy Jumbo Bucket."><span class="chip-num">Product Copy</span> "Write description for Crispy Jumbo Bucket"</button>
-                <button type="button" class="chip" data-prompt="Generate high-ROAS Google Shopping ad copy and headlines for the Gourmet Hot Sauce Trio."><span class="chip-num">Ad Copy</span> "Google Shopping headlines for Sauce Trio"</button>
-                <button type="button" class="chip" data-prompt="Create an Instagram 9:16 Story image prompt and caption brief for the Family Feast Box."><span class="chip-num">Creative Brief</span> "Instagram 9:16 Story prompt for Family Feast Box"</button>
+              <div class="welcome-avatar">🛠️</div>
+              <h2>Utility Minion</h2>
+              <p class="welcome-sub">Your creative execution partner for <strong>Giri's Fried Chicken</strong>. Generate high-converting product descriptions, 3-step cart-recovery email flows, ad copy for Google and Meta, and creative image generation briefs.</p>
+              <div class="prompt-grid">
+                <button type="button" class="prompt-card" data-prompt="Draft a 3-step abandoned cart email sequence to recover shoppers dropping off due to shipping costs.">
+                  <span class="card-badge">Email Flow</span>
+                  <strong class="card-title">Abandoned Cart Series</strong>
+                  <span class="card-desc">Draft 3-step email sequence recovering shoppers at shipping step.</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="Write an irresistible, mouth-watering product description for Giri's Signature Crispy Jumbo Bucket.">
+                  <span class="card-badge">Product Copy</span>
+                  <strong class="card-title">Jumbo Bucket Description</strong>
+                  <span class="card-desc">Write an irresistible description for Giri's Crispy Jumbo Bucket.</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="Generate high-ROAS Google Shopping ad copy and headlines for the Gourmet Hot Sauce Trio.">
+                  <span class="card-badge">Ad Copy</span>
+                  <strong class="card-title">Google Shopping Ads</strong>
+                  <span class="card-desc">High-ROAS ad copy and search headlines for the Sauce Trio.</span>
+                </button>
+                <button type="button" class="prompt-card" data-prompt="Create an Instagram 9:16 Story image prompt and caption brief for the Family Feast Box.">
+                  <span class="card-badge">Creative Brief</span>
+                  <strong class="card-title">Instagram Story Creative</strong>
+                  <span class="card-desc">9:16 Story image prompt and caption brief for Family Feast Box.</span>
+                </button>
               </div>
             </div>
           </div>
-          <form id="utility-chat-form" class="chat-input">
-            <input id="utility-chat-text" type="text" autocomplete="off" placeholder="Ask Utility Minion, e.g. 'Draft an email announcing our $75 free shipping threshold'..." />
-            <button type="submit">Generate</button>
-          </form>
+          <div class="chat-input-wrapper">
+            <form id="utility-chat-form" class="chat-input">
+              <input id="utility-chat-text" type="text" autocomplete="off" placeholder="Ask Utility Minion, e.g. 'Draft an email announcing our $75 free shipping threshold'..." />
+              <button type="submit" class="btn-send" aria-label="Send message">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 19V5M5 12l7-7 7 7"/>
+                </svg>
+              </button>
+            </form>
+            <div class="chat-footer-note">Utility Minion generates ready-to-use e-commerce copy and creative briefs.</div>
+          </div>
         </main>
       </div>
     </section>

@@ -94,7 +94,7 @@ function addMultiAgentBubble(role, text, routingData, sources, save = true) {
       header.appendChild(reason);
     }
 
-    if (routingData.tab_id) {
+    if (routingData.tab_id && routingData.tab_id !== "multi-agent") {
       const jumpBtn = document.createElement("button");
       jumpBtn.type = "button";
       jumpBtn.className = "agent-jump-btn";
@@ -188,7 +188,7 @@ if (multiAgentForm) {
   });
 }
 
-document.querySelectorAll("#tab-multi-agent .prompt-chips .chip").forEach((chip) => {
+document.querySelectorAll("#tab-multi-agent .prompt-chips .chip, #tab-multi-agent .prompt-card").forEach((chip) => {
   chip.addEventListener("click", () => {
     const prompt = chip.dataset.prompt;
     if (prompt && multiAgentInput) {
@@ -285,7 +285,7 @@ if (chatForm) {
   });
 }
 
-document.querySelectorAll(".chip-info").forEach((chip) => {
+document.querySelectorAll(".chip-info, #tab-information-escort .prompt-card").forEach((chip) => {
   chip.addEventListener("click", () => {
     const prompt = chip.dataset.prompt;
     if (prompt && chatInput) {
@@ -442,7 +442,7 @@ if (guidanceForm) {
   });
 }
 
-document.querySelectorAll("#tab-guidance-guru .prompt-chips .chip").forEach((chip) => {
+document.querySelectorAll("#tab-guidance-guru .prompt-chips .chip, #tab-guidance-guru .prompt-card").forEach((chip) => {
   chip.addEventListener("click", () => {
     const prompt = chip.dataset.prompt;
     if (prompt && guidanceInput) {
@@ -573,7 +573,7 @@ if (solutionForm) {
   });
 }
 
-document.querySelectorAll("#tab-solution-mate .prompt-chips .chip").forEach((chip) => {
+document.querySelectorAll("#tab-solution-mate .prompt-chips .chip, #tab-solution-mate .prompt-card").forEach((chip) => {
   chip.addEventListener("click", () => {
     const prompt = chip.dataset.prompt;
     if (prompt && solutionInput) {
@@ -665,7 +665,7 @@ if (utilityForm) {
   });
 }
 
-document.querySelectorAll("#tab-utility-minion .prompt-chips .chip").forEach((chip) => {
+document.querySelectorAll("#tab-utility-minion .prompt-chips .chip, #tab-utility-minion .prompt-card").forEach((chip) => {
   chip.addEventListener("click", () => {
     const prompt = chip.dataset.prompt;
     if (prompt && utilityInput) {
