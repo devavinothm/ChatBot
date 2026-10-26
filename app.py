@@ -9,7 +9,7 @@ from rag.chat import answer_question
 from rag.config import ALLOWED_EXTENSIONS, DOCUMENTS_DIR
 from rag.guidance import answer_guidance
 from rag.indexer import build_index, load_or_build_index
-from rag.multi_agent import orchestrate_multi_agent
+from rag.multi_agent import build_thinking_flow, detect_metrics, orchestrate_multi_agent
 from rag.solution import answer_solution
 from rag.utility import answer_utility
 
@@ -98,20 +98,37 @@ def guidance_chat():
     session_id = session["session_id"]
     history = GUIDANCE_CONVERSATIONS.setdefault(session_id, [])
     current_goal = GUIDANCE_GOALS.get(session_id)
+    matched_metrics = detect_metrics(question)
+    primary_metric = matched_metrics[0]["id"] if matched_metrics else "revenue"
 
     try:
-        answer_text, updated_goal, sources = answer_guidance(STORE, question, history, current_goal)
+        answer_text, updated_goal, sources = answer_guidance(
+            STORE, question, history, current_goal, metric_key=primary_metric
+        )
     except RuntimeError as exc:
         return jsonify({"error": str(exc)}), 500
 
     if updated_goal:
         GUIDANCE_GOALS[session_id] = updated_goal
 
+    thinking_flow = build_thinking_flow(
+        question,
+        "guidance_guru",
+        matched_metrics if matched_metrics else [{"name": "Monthly Revenue", "current": "$24,850", "target": "$50,000"}],
+        "Single-metric coaching via Guidance Guru (Tier 2 Cost).",
+        "Single-Metric Guidance",
+    )
+
     history.append({"role": "user", "content": question})
     history.append({"role": "assistant", "content": answer_text})
     GUIDANCE_CONVERSATIONS[session_id] = history[-20:]
 
-    return jsonify({"answer": answer_text, "goal_state": GUIDANCE_GOALS.get(session_id), "sources": sources})
+    return jsonify({
+        "answer": answer_text,
+        "goal_state": GUIDANCE_GOALS.get(session_id),
+        "sources": sources,
+        "thinking_flow": thinking_flow,
+    })
 
 
 @app.route("/api/guidance/reset", methods=["POST"])
@@ -144,6 +161,7 @@ def solution_chat():
     session_id = session["session_id"]
     history = SOLUTION_CONVERSATIONS.setdefault(session_id, [])
     current_scenario = SOLUTION_SCENARIOS.get(session_id)
+    matched_metrics = detect_metrics(question)
 
     try:
         answer_text, updated_analysis, sources = answer_solution(STORE, question, history, current_scenario)
@@ -153,11 +171,24 @@ def solution_chat():
     if updated_analysis:
         SOLUTION_SCENARIOS[session_id] = updated_analysis
 
+    thinking_flow = build_thinking_flow(
+        question,
+        "solution_mate",
+        matched_metrics,
+        "Multi-metric strategic diagnostic and scenario modeling via Solution Mate (Tier 3 Flagship Engine).",
+        "Multi-Metric Strategic Diagnostic",
+    )
+
     history.append({"role": "user", "content": question})
     history.append({"role": "assistant", "content": answer_text})
     SOLUTION_CONVERSATIONS[session_id] = history[-20:]
 
-    return jsonify({"answer": answer_text, "analysis": SOLUTION_SCENARIOS.get(session_id), "sources": sources})
+    return jsonify({
+        "answer": answer_text,
+        "analysis": SOLUTION_SCENARIOS.get(session_id),
+        "sources": sources,
+        "thinking_flow": thinking_flow,
+    })
 
 
 @app.route("/api/solution/reset", methods=["POST"])

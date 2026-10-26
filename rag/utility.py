@@ -70,7 +70,8 @@ def answer_utility(
     raw_answer = generate_completion(
         messages=messages,
         system_prompt=UTILITY_SYSTEM_PROMPT,
-        max_tokens=1400,
+        tier="tier1",
+        max_tokens=650,
     )
 
     clean_answer, draft_data = extract_utility_draft(raw_answer)

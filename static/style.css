@@ -1265,3 +1265,260 @@ input[type="file"] {
   overflow: auto;
   white-space: pre-wrap;
 }
+
+/* ============================================================
+   AI Thinking & Routing Flow Styles
+   ============================================================ */
+.thinking-flow-card {
+  margin: 8px 0 12px 0;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  font-size: 0.82rem;
+  transition: all 0.2s ease;
+}
+
+.thinking-flow-card.is-expanded {
+  border-color: rgba(16, 163, 127, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.thinking-flow-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  cursor: pointer;
+  background: rgba(127, 127, 127, 0.05);
+  user-select: none;
+  gap: 8px;
+}
+
+.thinking-flow-header:hover {
+  background: rgba(127, 127, 127, 0.1);
+}
+
+.thinking-flow-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.thinking-brain-icon {
+  font-size: 1rem;
+}
+
+.thinking-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.metric-count-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.metric-count-badge.single-metric {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.metric-count-badge.multi-metric {
+  background: rgba(168, 85, 247, 0.12);
+  color: #9333ea;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.metric-count-badge.zero-metric {
+  background: rgba(107, 114, 128, 0.12);
+  color: #6b7280;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.tier-cost-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.tier-cost-badge.tier1 {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.tier-cost-badge.tier2 {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.tier-cost-badge.tier3 {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.thinking-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.thinking-flow-body {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface);
+}
+
+.thinking-pipeline-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: rgba(127, 127, 127, 0.04);
+  border-radius: 6px;
+}
+
+.pipeline-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.pipeline-node {
+  font-size: 0.73rem;
+  font-weight: 600;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 5px;
+  color: var(--text);
+}
+
+.pipeline-arrow {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.thinking-scope-banner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: rgba(16, 163, 127, 0.05);
+  border: 1px solid rgba(16, 163, 127, 0.2);
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .thinking-scope-banner {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scope-metric-box, .scope-cost-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scope-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.scope-val {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.thinking-steps-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.thinking-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.step-num-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-content-box {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.step-head-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.step-title-text {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.step-badge-pill {
+  font-size: 0.68rem;
+  font-weight: 500;
+  background: rgba(127, 127, 127, 0.1);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--muted);
+}
+
+.step-detail-text {
+  margin: 3px 0 0 0;
+  font-size: 0.74rem;
+  color: var(--muted);
+  line-height: 1.35;
+}

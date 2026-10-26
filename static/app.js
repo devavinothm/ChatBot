@@ -46,6 +46,178 @@ function formatBubbleContent(bubble, role, text) {
   bubble.textContent = text;
 }
 
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function createThinkingFlowWidget(flow) {
+  if (!flow || !flow.flow_steps || !flow.flow_steps.length) return null;
+
+  const card = document.createElement("div");
+  card.className = "thinking-flow-card";
+
+  // Header / toggle bar
+  const header = document.createElement("div");
+  header.className = "thinking-flow-header";
+
+  const summary = document.createElement("div");
+  summary.className = "thinking-flow-summary";
+
+  const brain = document.createElement("span");
+  brain.className = "thinking-brain-icon";
+  brain.textContent = "🧠";
+
+  const title = document.createElement("strong");
+  title.className = "thinking-title";
+  title.textContent = "Thinking & Routing Flow";
+
+  const countBadge = document.createElement("span");
+  const count = flow.metric_count || 0;
+  countBadge.className = `metric-count-badge ${count === 1 ? "single-metric" : (count >= 2 ? "multi-metric" : "zero-metric")}`;
+  if (count === 1) {
+    countBadge.textContent = `1 Metric (${flow.detected_metrics && flow.detected_metrics[0] ? flow.detected_metrics[0] : "Focused"})`;
+  } else if (count >= 2) {
+    countBadge.textContent = `${count} Metrics (Multi-Metric)`;
+  } else {
+    countBadge.textContent = "0 Metrics (Policy / General)";
+  }
+
+  const tierBadge = document.createElement("span");
+  const tierKey = (flow.cost_tier && flow.cost_tier.tier) || "tier1";
+  tierBadge.className = `tier-cost-badge ${tierKey}`;
+  tierBadge.textContent = (flow.cost_tier && flow.cost_tier.name) || "Cost Tier";
+
+  summary.appendChild(brain);
+  summary.appendChild(title);
+  summary.appendChild(countBadge);
+  summary.appendChild(tierBadge);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "thinking-toggle-btn";
+  toggleBtn.innerHTML = `<span>Inspect Flow</span> <span class="toggle-arrow">▾</span>`;
+
+  header.appendChild(summary);
+  header.appendChild(toggleBtn);
+  card.appendChild(header);
+
+  // Expandable Body
+  const body = document.createElement("div");
+  body.className = "thinking-flow-body";
+  body.style.display = "none";
+
+  // 1. Pipeline path row
+  if (flow.pipeline_path && flow.pipeline_path.length) {
+    const pipelineRow = document.createElement("div");
+    pipelineRow.className = "thinking-pipeline-row";
+
+    const pLabel = document.createElement("span");
+    pLabel.className = "pipeline-label";
+    pLabel.textContent = "Path:";
+    pipelineRow.appendChild(pLabel);
+
+    flow.pipeline_path.forEach((node, idx) => {
+      const nodeEl = document.createElement("span");
+      nodeEl.className = "pipeline-node";
+      nodeEl.textContent = node;
+      pipelineRow.appendChild(nodeEl);
+
+      if (idx < flow.pipeline_path.length - 1) {
+        const arrow = document.createElement("span");
+        arrow.className = "pipeline-arrow";
+        arrow.textContent = "➔";
+        pipelineRow.appendChild(arrow);
+      }
+    });
+    body.appendChild(pipelineRow);
+  }
+
+  // 2. Metric Scope & Cost Optimization banner
+  const banner = document.createElement("div");
+  banner.className = "thinking-scope-banner";
+
+  const metricBox = document.createElement("div");
+  metricBox.className = "scope-metric-box";
+  metricBox.innerHTML = `
+    <span class="scope-label">Metric Scope</span>
+    <span class="scope-val">${escapeHtml(flow.metric_scope || "Standard")}</span>
+  `;
+
+  const costBox = document.createElement("div");
+  costBox.className = "scope-cost-box";
+  const costReason = (flow.cost_tier && flow.cost_tier.cost_reason) || (flow.reasoning_summary || "");
+  costBox.innerHTML = `
+    <span class="scope-label">Cost Optimization</span>
+    <span class="scope-val">${escapeHtml(costReason)}</span>
+  `;
+
+  banner.appendChild(metricBox);
+  banner.appendChild(costBox);
+  body.appendChild(banner);
+
+  // 3. 4-Step Reasoned Flow Timeline
+  const timeline = document.createElement("div");
+  timeline.className = "thinking-steps-timeline";
+
+  (flow.flow_steps || []).forEach((st) => {
+    const item = document.createElement("div");
+    item.className = "thinking-step-item";
+
+    const circle = document.createElement("div");
+    circle.className = "step-num-circle";
+    circle.textContent = st.step;
+
+    const content = document.createElement("div");
+    content.className = "step-content-box";
+
+    const head = document.createElement("div");
+    head.className = "step-head-row";
+
+    const stTitle = document.createElement("strong");
+    stTitle.className = "step-title-text";
+    stTitle.textContent = st.title;
+
+    const stBadge = document.createElement("span");
+    stBadge.className = "step-badge-pill";
+    stBadge.textContent = st.badge;
+
+    head.appendChild(stTitle);
+    head.appendChild(stBadge);
+
+    const stDetail = document.createElement("p");
+    stDetail.className = "step-detail-text";
+    stDetail.textContent = st.detail;
+
+    content.appendChild(head);
+    content.appendChild(stDetail);
+
+    item.appendChild(circle);
+    item.appendChild(content);
+    timeline.appendChild(item);
+  });
+
+  body.appendChild(timeline);
+  card.appendChild(body);
+
+  let isExpanded = false;
+  header.addEventListener("click", () => {
+    isExpanded = !isExpanded;
+    body.style.display = isExpanded ? "block" : "none";
+    card.classList.toggle("is-expanded", isExpanded);
+    toggleBtn.innerHTML = isExpanded
+      ? `<span>Hide Flow</span> <span class="toggle-arrow">▴</span>`
+      : `<span>Inspect Flow</span> <span class="toggle-arrow">▾</span>`;
+  });
+
+  return card;
+}
+
 // --- Tab Switching ---
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
