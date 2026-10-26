@@ -36,6 +36,7 @@ def answer_question(store: VectorStore, question: str, history: list):
     answer_text = generate_completion(
         messages=messages,
         system_prompt=SYSTEM_PROMPT,
-        max_tokens=1024,
+        tier="tier1",
+        max_tokens=500,
     )
     return answer_text, sources

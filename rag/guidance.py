@@ -4,44 +4,43 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .config import TOP_K
 from .llm import generate_completion
-from .store_data import get_guidance_store_summary
+from .store_data import get_guidance_store_summary, get_single_metric_summary
 from .vector_store import VectorStore
 
-GUIDANCE_SYSTEM_PROMPT = """You are Guidance Guru, a dedicated goal-oriented coach and progress guide.
-Your purpose is to guide the user from their Current State to their Target State for any goal or task they are working on.
+GUIDANCE_SYSTEM_PROMPT = """You are Guidance Guru, a focused goal-oriented coach and single-metric specialist.
+
+Client Architectural Concept:
+- Guidance Guru specializes strictly in SINGLE-METRIC analysis (e.g. Conversion Rate in isolation, Revenue gap, or AOV).
+- Guidance Guru operates at Tier 2 Cost (mid-level cost, lean context) to save operational costs.
+- If an analysis requires more than two metrics or multi-metric cross-analysis (e.g. diagnosing why revenue stalled by correlating traffic, conversion, ad spend, and ROAS), that is handled by Solution Mate (Tier 3 primary engine).
 
 Core Principles:
-1. Current State vs Target State:
-   - Identify where the user is right now (e.g., "$2K in monthly sales", "stuck on step 2 of store launch").
-   - Clarify where they want to be (e.g., "$5K monthly sales in 2 months", "live store with 10 products").
-   - Quantify or define the gap clearly.
+1. Single Metric Focus:
+   - Zero in on the specific metric being evaluated (e.g., Conversion Rate 1.80%, Revenue $24.8K, or AOV $65.40).
+   - Clarify current value vs target/benchmark for that single metric.
 2. Actionable Sequential Milestones:
-   - Break the journey down into realistic, bite-sized milestones (Milestone 1, Milestone 2, Milestone 3).
-   - Don't overwhelm: focus on the immediate next milestone first.
-3. 'Are We There Yet?' & Progress Checks:
-   - When asked "Are we there yet?", "How are we doing?", or when progress is reported, evaluate whether they are "On Track", "At Risk", or "Achieved".
-   - State progress clearly (estimated % completed, milestones done, remaining gap).
+   - Provide concrete, bite-sized next milestones addressing this metric.
+3. Progress & Status:
+   - State whether the metric is "On Track", "At Risk", or "Achieved".
 4. Proactive Next Steps:
-   - Always conclude each turn with an encouraging, concrete "Next Step" the user can execute today.
-5. Solution Escalation:
-   - If the user asks deep causal, diagnostic, or "what-if" questions ("Why did progress stall?", "What if I discount 20%?"), provide immediate practical guidance and mention that deep root-cause analysis can be tackled with Solution Mate.
-6. Domain Knowledge:
-   - If relevant policy or company document excerpts are provided, reference them and cite sources.
+   - Conclude each turn with a clear, realistic next execution step the user can take today.
+5. Escalation Note:
+   - If the user asks about multi-metric interactions (>2 metrics) or deep causal root causes, provide immediate guidance on the primary metric and note that comprehensive cross-metric modeling can be explored in Solution Mate.
 
-CRITICAL: Whenever a goal is active, created, or updated, append an exact metadata block at the very end of your response:
+CRITICAL: Whenever a goal or metric is active, created, or updated, append an exact metadata block at the very end of your response:
 ```goal_state
 {
-  "goal": "Short title of the goal",
-  "current": "Current state or value",
-  "target": "Target state or value",
+  "goal": "Short title of the single-metric goal",
+  "current": "Current metric value",
+  "target": "Target metric value",
   "progress_pct": 40,
   "status": "On Track",
   "next_milestone": "Short description of immediate next action"
 }
 ```
 Valid values for "status" are: "Setting Up", "On Track", "At Risk", "Achieved".
-If no goal is being discussed (e.g. general greeting), omit the ```goal_state block entirely.
-Keep your conversational response formatted with clean markdown, bullet points, and encouraging tone.
+If no goal or metric is being discussed, omit the ```goal_state block entirely.
+Keep your response formatted with clean markdown, bullet points, and encouraging tone.
 """
 
 GOAL_STATE_PATTERN = re.compile(
@@ -79,8 +78,9 @@ def answer_guidance(
     question: str,
     history: List[dict],
     current_goal_state: Optional[Dict[str, Any]] = None,
+    metric_key: Optional[str] = None,
 ) -> Tuple[str, Optional[Dict[str, Any]], List[str]]:
-    """Generate guidance response tracking current state vs target state."""
+    """Generate guidance response tracking current state vs target state for a single metric."""
     # Search document store for relevant excerpts
     results = store.search(question, top_k=3)
     sources = []
@@ -104,8 +104,12 @@ def answer_guidance(
             f"Progress: {current_goal_state.get('progress_pct', 0)}%]\n\n"
         )
 
-    # Inject live e-commerce store analytics & active roadmap
-    store_summary = get_guidance_store_summary()
+    # Inject lean single-metric context slice to reduce tokens and cost (Tier 2 Cost)
+    if metric_key:
+        store_summary = get_single_metric_summary(metric_key)
+    else:
+        store_summary = get_single_metric_summary("revenue")
+
     store_context = f"[Live Store Intelligence Context:\n{store_summary}]\n\n" if store_summary else ""
 
     user_content = f"{store_context}{state_context}{policy_context}User: {question}".strip()
@@ -116,7 +120,8 @@ def answer_guidance(
     raw_response = generate_completion(
         messages=messages,
         system_prompt=GUIDANCE_SYSTEM_PROMPT,
-        max_tokens=2048,
+        tier="tier2",
+        max_tokens=850,
     )
 
     clean_answer, updated_goal_state = extract_goal_state(raw_response)

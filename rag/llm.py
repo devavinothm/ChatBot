@@ -76,18 +76,61 @@ def get_groq_client():
     return _groq_client
 
 
+COST_TIERS = {
+    "tier1": {
+        "id": "tier1",
+        "name": "Tier 1: Lowest Cost",
+        "badge": "$",
+        "groq_model": "openai/gpt-oss-20b",
+        "claude_model": "claude-3-haiku-20240307",
+        "default_max_tokens": 450,
+        "description": "Minimal token overhead. Zero metric data loaded; pure document/policy grounding.",
+    },
+    "tier2": {
+        "id": "tier2",
+        "name": "Tier 2: Mid-Level Cost (Single Metric)",
+        "badge": "$$",
+        "groq_model": "openai/gpt-oss-20b",
+        "claude_model": "claude-3-5-haiku-20241022",
+        "default_max_tokens": 750,
+        "description": "Cost-optimized single-metric slice. Injects only the active metric to minimize input tokens.",
+    },
+    "tier3": {
+        "id": "tier3",
+        "name": "Tier 3: Flagship Primary (Multi-Metric)",
+        "badge": "$$$",
+        "groq_model": "openai/gpt-oss-120b",
+        "claude_model": "claude-sonnet-5",
+        "default_max_tokens": 1400,
+        "description": "Full multi-metric analytical engine with historical 6-month trends and what-if simulation.",
+    },
+}
+
+
 def generate_completion(
     messages: List[dict],
     system_prompt: str,
-    max_tokens: int = 1024,
+    max_tokens: Optional[int] = None,
+    model: Optional[str] = None,
+    tier: Optional[str] = None,
 ) -> str:
-    """Generate completion using the active LLM provider (Groq or Anthropic)."""
+    """Generate completion using the active LLM provider (Groq or Anthropic) with tiered cost optimization."""
     provider = get_active_provider()
+    tier_info = COST_TIERS.get(tier, {}) if tier else {}
+
+    if max_tokens is None:
+        max_tokens = tier_info.get("default_max_tokens", 1024)
 
     if provider == "groq":
         client = get_groq_client()
         groq_messages = [{"role": "system", "content": system_prompt}] + messages
-        model_name = os.environ.get("GROQ_MODEL") or GROQ_MODEL or "openai/gpt-oss-120b"
+        model_name = (
+            model
+            or tier_info.get("groq_model")
+            or os.environ.get("GROQ_MODEL")
+            or GROQ_MODEL
+            or "openai/gpt-oss-120b"
+        )
         try:
             response = client.chat.completions.create(
                 model=model_name,
@@ -96,16 +139,13 @@ def generate_completion(
             )
         except Exception as exc:
             # Fallback if specific model is not enabled on this Groq account
-            if "model_not_found" in str(exc) or "does not exist" in str(exc):
-                fallback_model = "openai/gpt-oss-120b"
-                if model_name != fallback_model:
-                    response = client.chat.completions.create(
-                        model=fallback_model,
-                        messages=groq_messages,
-                        max_tokens=max_tokens,
-                    )
-                else:
-                    raise exc
+            fallback_model = "openai/gpt-oss-120b"
+            if model_name != fallback_model:
+                response = client.chat.completions.create(
+                    model=fallback_model,
+                    messages=groq_messages,
+                    max_tokens=max_tokens,
+                )
             else:
                 raise exc
         choice = response.choices[0]
@@ -113,8 +153,13 @@ def generate_completion(
 
     if provider == "anthropic":
         client = get_anthropic_client()
+        claude_model_name = (
+            model
+            or tier_info.get("claude_model")
+            or os.environ.get("CLAUDE_MODEL", CLAUDE_MODEL)
+        )
         response = client.messages.create(
-            model=os.environ.get("CLAUDE_MODEL", CLAUDE_MODEL),
+            model=claude_model_name,
             max_tokens=max_tokens,
             system=system_prompt,
             messages=messages,
