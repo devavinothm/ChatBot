@@ -291,6 +291,11 @@ function addMultiAgentBubble(role, text, routingData, sources, save = true) {
       });
       bubble.appendChild(collabRow);
     }
+
+    if (routingData.thinking_flow) {
+      const flowWidget = createThinkingFlowWidget(routingData.thinking_flow);
+      if (flowWidget) bubble.appendChild(flowWidget);
+    }
   }
 
   const textContainer = document.createElement("div");
@@ -551,10 +556,18 @@ function updateGoalHeader(goalState, save = true) {
   }
 }
 
-function addGuidanceBubble(role, text, sources, save = true) {
+function addGuidanceBubble(role, text, sources, save = true, thinkingFlow = null) {
   const bubble = document.createElement("div");
   bubble.className = `bubble ${role}`;
-  formatBubbleContent(bubble, role, text);
+
+  if (role === "assistant" && thinkingFlow) {
+    const flowWidget = createThinkingFlowWidget(thinkingFlow);
+    if (flowWidget) bubble.appendChild(flowWidget);
+  }
+
+  const textContainer = document.createElement("div");
+  formatBubbleContent(textContainer, role, text);
+  bubble.appendChild(textContainer);
 
   if (sources && sources.length) {
     const sourcesEl = document.createElement("div");
@@ -572,7 +585,12 @@ function addGuidanceBubble(role, text, sources, save = true) {
   guidanceMessagesEl.scrollTop = guidanceMessagesEl.scrollHeight;
 
   if (save) {
-    appendStorageMessage(STORAGE_KEYS.guidanceHistory, { role, text, sources: sources || [] });
+    appendStorageMessage(STORAGE_KEYS.guidanceHistory, {
+      role,
+      text,
+      sources: sources || [],
+      thinkingFlow: thinkingFlow || null,
+    });
   }
 }
 
@@ -600,7 +618,7 @@ if (guidanceForm) {
       if (!res.ok) {
         addGuidanceBubble("error", data.error || "Something went wrong.", null, true);
       } else {
-        addGuidanceBubble("assistant", data.answer, data.sources, true);
+        addGuidanceBubble("assistant", data.answer, data.sources, true, data.thinking_flow);
         if (data.goal_state) {
           updateGoalHeader(data.goal_state, true);
         }
@@ -682,10 +700,18 @@ function updateSolutionHeader(analysis, save = true) {
   }
 }
 
-function addSolutionBubble(role, text, sources, save = true) {
+function addSolutionBubble(role, text, sources, save = true, thinkingFlow = null) {
   const bubble = document.createElement("div");
   bubble.className = `bubble ${role}`;
-  formatBubbleContent(bubble, role, text);
+
+  if (role === "assistant" && thinkingFlow) {
+    const flowWidget = createThinkingFlowWidget(thinkingFlow);
+    if (flowWidget) bubble.appendChild(flowWidget);
+  }
+
+  const textContainer = document.createElement("div");
+  formatBubbleContent(textContainer, role, text);
+  bubble.appendChild(textContainer);
 
   if (sources && sources.length) {
     const sourcesEl = document.createElement("div");
@@ -703,7 +729,12 @@ function addSolutionBubble(role, text, sources, save = true) {
   solutionMessagesEl.scrollTop = solutionMessagesEl.scrollHeight;
 
   if (save) {
-    appendStorageMessage(STORAGE_KEYS.solutionHistory, { role, text, sources: sources || [] });
+    appendStorageMessage(STORAGE_KEYS.solutionHistory, {
+      role,
+      text,
+      sources: sources || [],
+      thinkingFlow: thinkingFlow || null,
+    });
   }
 }
 
@@ -731,7 +762,7 @@ if (solutionForm) {
       if (!res.ok) {
         addSolutionBubble("error", data.error || "Something went wrong.", null, true);
       } else {
-        addSolutionBubble("assistant", data.answer, data.sources, true);
+        addSolutionBubble("assistant", data.answer, data.sources, true, data.thinking_flow);
         if (data.analysis) {
           updateSolutionHeader(data.analysis, true);
         }
@@ -953,7 +984,9 @@ if (clearAllBtn) {
     if (savedGuidance.length > 0 && guidanceWelcomeEl) {
       guidanceWelcomeEl.style.display = "none";
     }
-    savedGuidance.forEach((item) => addGuidanceBubble(item.role, item.text, item.sources, false));
+    savedGuidance.forEach((item) =>
+      addGuidanceBubble(item.role, item.text, item.sources, false, item.thinkingFlow)
+    );
   }
 
   // Restore Goal State
@@ -975,7 +1008,9 @@ if (clearAllBtn) {
     if (savedSolution.length > 0 && solutionWelcomeEl) {
       solutionWelcomeEl.style.display = "none";
     }
-    savedSolution.forEach((item) => addSolutionBubble(item.role, item.text, item.sources, false));
+    savedSolution.forEach((item) =>
+      addSolutionBubble(item.role, item.text, item.sources, false, item.thinkingFlow)
+    );
   }
 
   // Restore Solution Analysis

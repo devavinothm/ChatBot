@@ -39,7 +39,7 @@
             <div class="welcome-box" id="multi-agent-welcome">
               <div class="welcome-avatar">🤖</div>
               <h2>What can I help with today?</h2>
-              <p class="welcome-sub">Giri's Fried Chicken Multi-Agent Intelligence Hub. Ask any question — the orchestrator automatically detects your intent and delegates to the right agent or coordinates across multiple agents.</p>
+              <p class="welcome-sub">Giri's Fried Chicken Multi-Agent Intelligence Hub. Cost-tiered routing: <strong>Tier 1</strong> for policies/copy (lowest cost), <strong>Tier 2 Guidance Bot</strong> for single-metric coaching, and <strong>Tier 3 Solution Bot</strong> for multi-metric cross-analysis (&gt;2 metrics). Click <em>Inspect Flow</em> on any answer to view the AI's step-by-step thinking and execution path.</p>
               <div class="prompt-grid">
                 <button type="button" class="prompt-card" data-prompt="What are the platform commission tiers when we hit $50,000 monthly sales?">
                   <span class="card-badge">📚 Policy</span>
@@ -174,7 +174,7 @@
             <div class="welcome-box" id="guidance-welcome">
               <div class="welcome-avatar">🧭</div>
               <h2>Guidance Guru</h2>
-              <p class="welcome-sub">Coaching <strong>Giri's Fried Chicken</strong> from <strong>$24,850/mo</strong> to our <strong>$50,000/mo Q4 Target</strong>. Tracking KPIs, breaking down the $25,150 gap into milestones, and guiding daily execution.</p>
+              <p class="welcome-sub">Single-Metric Coach (Tier 2 Cost). Focuses strictly on a single performance metric (Conversion Rate, Revenue, CAC, or AOV) with lean context, tracking current value vs target and guiding daily execution.</p>
               <div class="prompt-grid">
                 <button type="button" class="prompt-card" data-prompt="We are plateaued at $24.8K sales. What is the immediate milestone to reach our $50K Q4 target?">
                   <span class="card-badge">Q4</span>
@@ -209,7 +209,7 @@
                 </svg>
               </button>
             </form>
-            <div class="chat-footer-note">Guidance Guru coaches sequential milestones toward the $50k target.</div>
+            <div class="chat-footer-note">Guidance Guru coaches single-metric goals with cost-optimized lean context (Tier 2).</div>
           </div>
         </main>
       </div>
@@ -235,7 +235,7 @@
             <div class="welcome-box" id="solution-welcome">
               <div class="welcome-avatar">💡</div>
               <h2>Solution Mate</h2>
-              <p class="welcome-sub">Strategic diagnostic and reasoning partner for <strong>Giri's Fried Chicken</strong>. Analyze 6-month performance trends, model what-if scenarios, and evaluate marketing channel ROAS.</p>
+              <p class="welcome-sub">Primary Strategic Engine (Tier 3 Flagship). Deployed when analyzing <strong>more than two interacting metrics</strong>, 6-month performance plateau trends, and what-if sensitivity simulations.</p>
               <div class="prompt-grid">
                 <button type="button" class="prompt-card" data-prompt="Why did our sales plateau at ~$24.8K for the last 3 months despite steady traffic? Diagnose the root cause.">
                   <span class="card-badge">Q8</span>
@@ -270,7 +270,7 @@
                 </svg>
               </button>
             </form>
-            <div class="chat-footer-note">Solution Mate models strategic scenarios with data-driven confidence ratings.</div>
+            <div class="chat-footer-note">Solution Mate is the primary engine for multi-metric cross-analysis (&gt;2 metrics) and what-if simulations.</div>
           </div>
         </main>
       </div>
@@ -519,8 +519,8 @@
           <!-- Group 2 -->
           <div class="q-group">
             <div class="q-group-header">
-              <span class="q-agent-badge badge-guidance">🧭 Guidance Guru</span>
-              <span class="q-agent-desc">Current state vs Target state, revenue gap analysis, sequential milestone coaching, and today's action steps</span>
+              <span class="q-agent-badge badge-guidance">🧭 Guidance Guru (Single Metric • Tier 2)</span>
+              <span class="q-agent-desc">Specializes strictly in single-metric coaching (revenue gap, conversion rate, CAC, or AOV) with lean context slice to minimize cost</span>
             </div>
             <div class="q-card-list">
               <div class="q-card">
@@ -572,8 +572,8 @@
           <!-- Group 3 -->
           <div class="q-group">
             <div class="q-group-header">
-              <span class="q-agent-badge badge-solution">💡 Solution Mate</span>
-              <span class="q-agent-desc">Causal root-cause diagnosis, 6-month trend analysis, what-if simulations, and trade-off sensitivity modeling</span>
+              <span class="q-agent-badge badge-solution">💡 Solution Mate (Multi-Metric • Tier 3 Primary)</span>
+              <span class="q-agent-desc">Primary engine for queries accessing more than two metrics (&gt;2 metrics), 6-month historical trends, and what-if sensitivity simulations</span>
             </div>
             <div class="q-card-list">
               <div class="q-card">
